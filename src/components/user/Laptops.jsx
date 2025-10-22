@@ -17,7 +17,7 @@ const Laptops = () => {
     const navigate = useNavigate();
     const getLaptops = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-2.onrender.com/user/laptops", {
+            const res = await axios.get("https://demo-deployment2-3.onrender.com/user/laptops", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

@@ -28,7 +28,7 @@ const Displaymobiles = () => {
 
     try {
       const response = await axios.post(
-        `https://demo-deployment2-2.onrender.com/api/cart/add/${userId}/mobiles/${item.id}`,
+        `https://demo-deployment2-3.onrender.com/api/cart/add/${userId}/mobiles/${item.id}`,
         null,
         { params: { qty: quantity } }
       );
