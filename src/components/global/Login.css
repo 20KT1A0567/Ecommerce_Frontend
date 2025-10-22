@@ -1,0 +1,130 @@
+
+.parent {
+  background-image: url("https://png.pngtree.com/background/20230413/original/pngtree-business-e-shopping-picture-image_2422998.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; 
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  width: 100vw; 
+  height: 100vh; 
+  margin: 0; 
+  padding: 0;
+  box-sizing: border-box; 
+}
+
+.login-container {
+  margin-top: 150px;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  background: linear-gradient(145deg, #ffffff, #f3f3f3);
+  border-radius: 15px;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2), -10px -10px 20px rgba(255, 255, 255, 0.5);
+  text-align: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.login-container:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #4a4a4a;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 14px;
+  margin-bottom: 15px;
+  animation: shake 0.3s ease-in-out;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease-in-out;
+}
+
+.input-group input:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 8px rgba(106, 17, 203, 0.5);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  color:black;
+  background:lightgreen; 
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #ff6f61, #d64550); 
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ca1 {
+  margin-top: 20px;
+}
+
+.ca1 a {
+  color: #2575fc;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.ca1 a:hover {
+  color: #6a11cb;
+  text-decoration: underline;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.input-group input, button {
+  transition: all 0.3s ease;
+}

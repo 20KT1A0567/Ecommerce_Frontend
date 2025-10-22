@@ -1,0 +1,110 @@
+/* General Styling for the Invoice */
+.invoice-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.invoice-id, .invoice-amount {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.invoice-items {
+  margin-top: 20px;
+}
+
+.invoice-items h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Styling for each item in the invoice */
+.invoice-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.invoice-item .item-info {
+  flex-grow: 1;
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-item .item-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.invoice-item .item-description {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 5px;
+}
+
+.invoice-item .item-price-qty {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.invoice-item .item-price-qty span {
+  color: #555;
+}
+
+/* Button Styles */
+.download-button, .back-button {
+  width: 200px;
+  padding: 10px;
+  margin: 20px auto;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover, .back-button:hover {
+  background-color: #0056b3;
+}
+
+.thank-you-message {
+  font-size: 1.5rem;
+  text-align: center;
+  color:green;
+  margin-top: 20px;
+}
