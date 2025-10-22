@@ -17,11 +17,16 @@ const Displaymen = () => {
   }
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const getAuthToken = () => {
+    return localStorage.getItem("token");
+  };
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
+    const token = getAuthToken();
 
-    if (!userId) {
+    if (!userId || !token) {
       alert("Please log in to add items to the cart.");
+      navigate("/login");
       return;
     }
 
@@ -29,14 +34,30 @@ const Displaymen = () => {
       const response = await axios.post(
         `https://demo-deployment2-12.onrender.com/api/cart/add/${userId}/men/${item.id}`,
         null,
-        { params: { qty: quantity } }
+        { 
+          params: { qty: quantity },
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
-      const { data } = response;
+      
       alert(`Added ${quantity} of ${item.name} to your cart!`);
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to add item to the cart.");
+      console.error("Add to cart error:", error);
+      
+      if (error.response?.status === 401) {
+        alert("Your session has expired. Please log in again.");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        alert(error.response?.data?.message || "Failed to add item to the cart.");
+      }
     }
   };
+
   const handleLogout = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
@@ -80,6 +101,9 @@ const Displaymen = () => {
             src={item.image || 'https://via.placeholder.com/300'}
             alt={item.name || "Men's Wear Image"}
             className="cosmetic-image"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/300';
+            }}
           />
           <div className="cosmetic-details">
             <h3>{item.name || 'N/A'}</h3>
