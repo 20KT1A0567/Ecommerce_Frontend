@@ -18,7 +18,7 @@ const uploadToys = () => {
     const fetchCosmetics = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-8.onrender.com/admin/toys", {
+            const response = await axios.get("https://demo-deployment2-9.onrender.com/admin/toys", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -57,7 +57,7 @@ const uploadToys = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-8.onrender.com/admin/upload/toys", formData, {
+            await axios.post("https://demo-deployment2-9.onrender.com/admin/upload/toys", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ const uploadToys = () => {
     const handleDelete = async (id) => {
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-8.onrender.com/admin/delete/toys/${id}`, {
+            await axios.delete(`https://demo-deployment2-9.onrender.com/admin/delete/toys/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -117,7 +117,7 @@ const uploadToys = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-8.onrender.com/admin/update/toys/${selectedCosmetic.id}`,
+                `https://demo-deployment2-9.onrender.com/admin/update/toys/${selectedCosmetic.id}`,
                 formData,
                 {
                     headers: {

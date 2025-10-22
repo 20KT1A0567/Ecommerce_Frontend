@@ -16,7 +16,7 @@ const Electronics = () => {
     const navigate = useNavigate();
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8.onrender.com/user/electronics", {
+            const res = await axios.get("https://demo-deployment2-9.onrender.com/user/electronics", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
