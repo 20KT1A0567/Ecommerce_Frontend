@@ -31,7 +31,7 @@ const Displayelectronics = () => {
 
     try {
       const response = await axios.post(
-        `https://demo-deployment2-11.onrender.com/api/cart/add/${userId}/electronics/${item.id}`,
+        `https://demo-deployment2-12.onrender.com/api/cart/add/${userId}/electronics/${item.id}`,
         null,
         { params: { qty: quantity } }
       );

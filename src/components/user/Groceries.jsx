@@ -17,7 +17,7 @@ const Groceries = () => {
 
     const getGroceries = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-11.onrender.com/user/grocery", {
+            const res = await axios.get("https://demo-deployment2-12.onrender.com/user/grocery", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
