@@ -16,7 +16,7 @@ const Toys = () => {
     const navigate = useNavigate();
     const getToys = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-4.onrender.com/user/toys", {
+            const res = await axios.get("https://demo-deployment2-5.onrender.com/user/toys", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

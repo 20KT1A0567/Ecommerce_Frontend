@@ -28,7 +28,7 @@ const Displaywomen = () => {
 
     try {
       const response = await axios.post(
-        `https://demo-deployment2-4.onrender.com/api/cart/add/${userId}/women/${item.id}`,
+        `https://demo-deployment2-5.onrender.com/api/cart/add/${userId}/women/${item.id}`,
         null,
         { params: { qty: quantity } }
       );
