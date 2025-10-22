@@ -48,13 +48,13 @@ const Homepage = () => {
           <div id="imageCarousel" className="carousel slide" data-bs-ride="carousel" ref={carouselRef}>
             <div className="carousel-inner">
               <div className="carousel-item active">
-                <img src="https://excelrr.s3.eu-north-1.amazonaws.com/shopping1.jpg" alt="Shopping" className="d-block w-100 carousel-img" />
+                <img src="https://tse1.mm.bing.net/th/id/OIP.r9swUkudWzWLJCFjNVkypQHaEJ?pid=Api&P=0&h=180" alt="Shopping" className="d-block w-100 carousel-img" />
               </div>
               <div className="carousel-item">
-                <img src="https://excelrr.s3.eu-north-1.amazonaws.com/footwear.jpg" alt="Footwear" className="d-block w-100 carousel-img" />
+                <img src="https://tse3.mm.bing.net/th/id/OIP.mO9EhCoHe-ddGDmRmQMn0gHaE6?pid=Api&P=0&h=180" alt="Footwear" className="d-block w-100 carousel-img" />
               </div>
               <div className="carousel-item">
-                <img src="https://batterylifehack.com/wp-content/uploads/2019/05/Electronic-4.jpg" alt="Electronics" className="d-block w-100 carousel-img" />
+                <img src="https://tse4.mm.bing.net/th/id/OIP.zJ56fxZnSrg7Tc_oL6MTOQHaE7?pid=Api&P=0&h=180" alt="Electronics" className="d-block w-100 carousel-img" />
               </div>
               <div className="carousel-item">
                 <img src="https://e0.pxfuel.com/wallpapers/598/149/desktop-wallpaper-there-is-no-denying-that-online-shopping-is-one-of-the-biggest-groceries.jpg" alt="Shopping Again" className="d-block w-100 carousel-img" />
