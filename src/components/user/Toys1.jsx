@@ -14,7 +14,7 @@ const Toys1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-9.onrender.com/toys");
+            const res = await axios.get("https://demo-deployment2-11.onrender.com/toys");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -34,7 +34,7 @@ const Toys1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-9.onrender.com/toys", item, {
+        axios.post("https://demo-deployment2-11.onrender.com/toys", item, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(() => {

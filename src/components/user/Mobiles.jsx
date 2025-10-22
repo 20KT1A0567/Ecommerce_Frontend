@@ -16,7 +16,7 @@ const Mobiles = () => {
     const navigate = useNavigate();
     const getMobiles = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-9.onrender.com/user/mobiles", {
+            const res = await axios.get("https://demo-deployment2-11.onrender.com/user/mobiles", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

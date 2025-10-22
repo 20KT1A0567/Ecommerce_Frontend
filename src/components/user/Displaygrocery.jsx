@@ -29,7 +29,7 @@ const Displaygrocery = () => {
 
     try {
       const response = await axios.post(
-        `https://demo-deployment2-9.onrender.com/api/cart/add/${userId}/grocery/${item.id}`,
+        `https://demo-deployment2-11.onrender.com/api/cart/add/${userId}/grocery/${item.id}`,
         null,
         { params: { qty: quantity } }
       );
