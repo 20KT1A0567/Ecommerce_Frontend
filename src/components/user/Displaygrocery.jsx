@@ -16,14 +16,22 @@ const Displaygrocery = () => {
   if (!item) {
     return <h1>Grocery Details not found.</h1>;
   }
+
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
+  // Get authentication token
+  const getAuthToken = () => {
+    return localStorage.getItem("token");
+  };
+
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
+    const token = getAuthToken();
 
-    if (!userId) {
+    if (!userId || !token) {
       alert("Please log in to add items to the cart.");
+      navigate("/login"); // Redirect to login
       return;
     }
 
@@ -31,13 +39,27 @@ const Displaygrocery = () => {
       const response = await axios.post(
         `https://demo-deployment2-12.onrender.com/api/cart/add/${userId}/grocery/${item.id}`,
         null,
-        { params: { qty: quantity } }
+        { 
+          params: { qty: quantity },
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
-      const { data } = response;
 
       alert(`Added ${quantity} of ${item.name} to your cart!`);
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to add item to the cart.");
+      console.error("Cart error:", error);
+      
+      if (error.response?.status === 401) {
+        alert("Your session has expired. Please log in again.");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        alert(error.response?.data?.message || "Failed to add item to the cart.");
+      }
     }
   };
 
