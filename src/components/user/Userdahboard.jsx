@@ -34,7 +34,7 @@ const UserDashboard = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://demo-deployment2-3.onrender.com/user/search?keyword=${query}`
+          `https://demo-deployment2-4.onrender.com/user/search?keyword=${query}`
         );
         const searchResults = [];
 
