@@ -18,7 +18,7 @@ const uploadMobiles = () => {
     const fetchCosmetics = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-1.onrender.com/admin/mobiles", {
+            const response = await axios.get("https://demo-deployment2-2.onrender.com/admin/mobiles", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -57,7 +57,7 @@ const uploadMobiles = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-1.onrender.com/admin/upload/mobiles", formData, {
+            await axios.post("https://demo-deployment2-2.onrender.com/admin/upload/mobiles", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ const uploadMobiles = () => {
     const handleDelete = async (id) => {
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-1.onrender.com/admin/delete/mobiles/${id}`, {
+            await axios.delete(`https://demo-deployment2-2.onrender.com/admin/delete/mobiles/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -117,7 +117,7 @@ const uploadMobiles = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-1.onrender.com/admin/update/mobiles/${selectedCosmetic.id}`,
+                `https://demo-deployment2-2.onrender.com/admin/update/mobiles/${selectedCosmetic.id}`,
                 formData,
                 {
                     headers: {

@@ -16,7 +16,7 @@ const Kids = () => {
     const navigate = useNavigate();
     const getKidsProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-1.onrender.com/user/kids", {
+            const res = await axios.get("https://demo-deployment2-2.onrender.com/user/kids", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

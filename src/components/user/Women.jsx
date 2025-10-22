@@ -16,7 +16,7 @@ const Women = () => {
     const navigate = useNavigate();
     const getWomenProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-1.onrender.com/user/women", {
+            const res = await axios.get("https://demo-deployment2-2.onrender.com/user/women", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
