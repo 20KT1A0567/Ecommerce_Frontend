@@ -22,7 +22,7 @@ const Invoice = () => {
 
   const clearCartAndNavigate = (isBackToDashboard = false) => {
     axios
-      .delete(`https://demo-deployment2-5.onrender.com/api/cart/clear/${userId}`)
+      .delete(`https://demo-deployment2-6.onrender.com/api/cart/clear/${userId}`)
       .then(() => {
         console.log("Cart cleared successfully.");
         setCartItems([]);
@@ -48,7 +48,7 @@ const Invoice = () => {
   const fetchCartData = async () => {
     if (!userId) return setLoading(false);
     try {
-      const response = await axios.get(`https://demo-deployment2-5.onrender.com/api/cart/${userId}`);
+      const response = await axios.get(`https://demo-deployment2-6.onrender.com/api/cart/${userId}`);
       setCartItems(response.data.items || []);
     } catch (error) {
       console.error("Error fetching cart data:", error);
@@ -62,7 +62,7 @@ const Invoice = () => {
 
     const fetchOrderDetails = async () => {
       try {
-        const response = await axios.get(`https://demo-deployment2-5.onrender.com/orders/${orderId}`);
+        const response = await axios.get(`https://demo-deployment2-6.onrender.com/orders/${orderId}`);
         setOrderDetails(response.data);
       } catch (error) {
         console.error("Error fetching order details:", error);

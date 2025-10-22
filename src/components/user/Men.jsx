@@ -17,7 +17,7 @@ const Men = () => {
 
     const getMenProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5.onrender.com/user/men", {
+            const res = await axios.get("https://demo-deployment2-6.onrender.com/user/men", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
