@@ -14,7 +14,7 @@ const Kids1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7.onrender.com/kids");
+            const res = await axios.get("https://demo-deployment2-8.onrender.com/kids");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -34,7 +34,7 @@ const Kids1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-7.onrender.com/kids", item, {
+        axios.post("https://demo-deployment2-8.onrender.com/kids", item, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(() => {

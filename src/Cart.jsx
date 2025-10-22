@@ -21,7 +21,7 @@ const Cart = () => {
 
   const handlePayment = async () => {
     try {
-      const orderResponse = await axios.post("https://demo-deployment2-7.onrender.com/createOrder", {
+      const orderResponse = await axios.post("https://demo-deployment2-8.onrender.com/createOrder", {
         userId,
         amount: calculateTotal(),
         name: userName,
@@ -39,7 +39,7 @@ const Cart = () => {
         order_id: order.razorpayOrderId,
         handler: async (response) => {
           try {
-            const verifyResponse = await axios.post("https://demo-deployment2-7.onrender.com/paymentCallback", {
+            const verifyResponse = await axios.post("https://demo-deployment2-8.onrender.com/paymentCallback", {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
@@ -118,7 +118,7 @@ const Cart = () => {
         return;
       }
       try {
-        const response = await axios.get(`https://demo-deployment2-7.onrender.com/api/cart/${userId}`);
+        const response = await axios.get(`https://demo-deployment2-8.onrender.com/api/cart/${userId}`);
         const { items } = response.data;
         setData(items || []);
         setLoading(false);
@@ -135,7 +135,7 @@ const Cart = () => {
     if (newQty < 1) return;
 
     try {
-      await axios.put(`https://demo-deployment2-7.onrender.com/api/cart/update/${userId}/${itemId}`, null, { params: { qty: newQty } });
+      await axios.put(`https://demo-deployment2-8.onrender.com/api/cart/update/${userId}/${itemId}`, null, { params: { qty: newQty } });
       setData((prev) => prev.map(item => item.id === itemId ? { ...item, qty: newQty } : item));
     } catch (error) {
       alert("Failed to update quantity.");
@@ -144,7 +144,7 @@ const Cart = () => {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await axios.delete(`https://demo-deployment2-7.onrender.com/api/cart/delete/${userId}/${itemId}`);
+      await axios.delete(`https://demo-deployment2-8.onrender.com/api/cart/delete/${userId}/${itemId}`);
       setData((prev) => prev.filter((item) => item.id !== itemId));
     } catch (error) {
       alert("Failed to remove item from cart.");

@@ -21,7 +21,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://demo-deployment2-7.onrender.com/register', {
+      const response = await axios.post('https://demo-deployment2-8.onrender.com/register', {
         username: refUsername.current.value,
         password: refPassword.current.value,
         role: isAdmin ? refRole.current.value : 'ROLE_USER',

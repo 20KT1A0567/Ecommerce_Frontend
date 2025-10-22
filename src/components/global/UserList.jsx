@@ -8,7 +8,7 @@ const UserList = () => {
   const [selectedRoles, setSelectedRoles] = useState({});
 
   useEffect(() => {
-    axios.get("https://demo-deployment2-7.onrender.com/admin/users")
+    axios.get("https://demo-deployment2-8.onrender.com/admin/users")
       .then(response => {
         setUsers(response.data);
       })
@@ -18,7 +18,7 @@ const UserList = () => {
       });
   }, []);
   const updateUserRole = (id, newRole) => {
-    axios.put(`https://demo-deployment2-7.onrender.com/admin/users/${id}/role`, { role: newRole })
+    axios.put(`https://demo-deployment2-8.onrender.com/admin/users/${id}/role`, { role: newRole })
       .then(response => {
         setUsers(users.map(user => user.id === id ? { ...user, role: newRole } : user));
         alert("Role updated successfully!");

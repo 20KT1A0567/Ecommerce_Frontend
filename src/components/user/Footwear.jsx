@@ -16,7 +16,7 @@ const Footwear = () => {
     const navigate = useNavigate();
     const getFootwear = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7.onrender.com/user/footwear", {
+            const res = await axios.get("https://demo-deployment2-8.onrender.com/user/footwear", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

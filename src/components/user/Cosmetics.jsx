@@ -17,7 +17,7 @@ const Cosmetics = () => {
 
     const getCosmetics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7.onrender.com/user/cosmetics", {
+            const res = await axios.get("https://demo-deployment2-8.onrender.com/user/cosmetics", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
