@@ -12,31 +12,34 @@ const UserDashboard = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
+  // ✅ Logout user
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
     navigate("/");
   };
 
+  // ✅ Handle logo click - go to home
   const handleLogoClick = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
 
+  // ✅ Handle search on Enter or button click
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
     setLoading(true);
     try {
-      // ✅ Replace with your backend search API URL
+      // ✅ Replace with your actual backend endpoint
       const response = await axios.get(
         `https://your-backend-api.com/api/products/search?query=${searchQuery}`
       );
 
       console.log("Search Response:", response.data);
 
-      // ✅ Ensure data is always an array
+      // ✅ Handle both object and array responses safely
       const results = Array.isArray(response.data)
         ? response.data
         : response.data.results || [];
@@ -50,7 +53,7 @@ const UserDashboard = () => {
     }
   };
 
-  // Category cards section
+  // ✅ Category section
   const renderCategories = () => (
     <div className="amazon-style">
       <h2>Explore Categories</h2>
@@ -120,27 +123,26 @@ const UserDashboard = () => {
 
   return (
     <>
+      {/* Header */}
       <div className="shopping-app">
         <div className="app-header">
           <div className="logo" onClick={handleLogoClick}>
             <img src={logo} alt="App Logo" width={200} height={100} />
           </div>
 
-          <div className="search-bar-container">
+          {/* Search Bar */}
+          <form className="search-bar-container" onSubmit={handleSearch}>
             <input
               type="search"
               placeholder="Search products"
               className="search-bar"
               value={searchQuery}
-              onChange={handleSearch}
-              onKeyUp={(e) => {
-                if (e.key === "Backspace" && searchQuery === "") {
-                  setSearchResults([]);
-                }
-              }}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </div>
+            <button type="submit" className="search-btn">Search</button>
+          </form>
 
+          {/* User + Cart */}
           <div className="cart-login">
             <div className="icon1">
               <i className="fa fa-user-circle"></i>
@@ -170,6 +172,7 @@ const UserDashboard = () => {
         </div>
       </div>
 
+      {/* Conditional Rendering */}
       {searchQuery.trim().length > 0 ? (
         <RenderSearchResults
           loading={loading}
