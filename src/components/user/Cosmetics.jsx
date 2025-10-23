@@ -43,7 +43,7 @@ const Cosmetics = () => {
     const getCosmetics = async () => {
         try {
             const res = await axios.get(
-                "https://demo-deployment2-5-zlsf.onrender.com/user/cosmetics",
+                "https://demo-deployment2-7-bbpl.onrender.com/user/cosmetics",
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,

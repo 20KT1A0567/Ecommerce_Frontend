@@ -30,7 +30,7 @@ const Kids1 = () => {
 
     const getKids = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/kids");
+            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/kids");
             setKids(res.data);
             setError(null);
         } catch (error) {
@@ -52,7 +52,7 @@ const Kids1 = () => {
             return;
         }
         axios
-            .post("https://demo-deployment2-5-zlsf.onrender.com/kids", item, {
+            .post("https://demo-deployment2-7-bbpl.onrender.com/kids", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {

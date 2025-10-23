@@ -35,7 +35,7 @@ const Women = () => {
 
     const getWomenProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/user/women", {
+            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/user/women", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

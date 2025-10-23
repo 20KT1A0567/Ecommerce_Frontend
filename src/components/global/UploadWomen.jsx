@@ -36,7 +36,7 @@ const UploadWomen = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://demo-deployment2-5-zlsf.onrender.com/admin/women",
+                "https://demo-deployment2-7-bbpl.onrender.com/admin/women",
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -76,7 +76,7 @@ const UploadWomen = () => {
 
         try {
             await axios.post(
-                "https://demo-deployment2-5-zlsf.onrender.com/admin/upload/women",
+                "https://demo-deployment2-7-bbpl.onrender.com/admin/upload/women",
                 formData,
                 {
                     headers: {
@@ -102,7 +102,7 @@ const UploadWomen = () => {
     const handleDelete = async (id) => {
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-5-zlsf.onrender.com/admin/delete/women/${id}`, {
+            await axios.delete(`https://demo-deployment2-7-bbpl.onrender.com/admin/delete/women/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert("Women deleted successfully!");
@@ -137,7 +137,7 @@ const UploadWomen = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-5-zlsf.onrender.com/admin/update/women/${selectedCosmetic.id}`,
+                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/women/${selectedCosmetic.id}`,
                 formData,
                 {
                     headers: {

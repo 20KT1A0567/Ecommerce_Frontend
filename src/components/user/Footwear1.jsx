@@ -26,7 +26,7 @@ const Footwear1 = () => {
 
     const getFootwear = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/footwear");
+            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/footwear");
             setFootwear(res.data);
             setError(null);
         } catch (error) {
@@ -54,7 +54,7 @@ const Footwear1 = () => {
         }
 
         axios
-            .post("https://demo-deployment2-5-zlsf.onrender.com/cart", item, {
+            .post("https://demo-deployment2-7-bbpl.onrender.com/cart", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {

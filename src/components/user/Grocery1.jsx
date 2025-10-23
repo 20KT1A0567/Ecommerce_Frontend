@@ -27,7 +27,7 @@ const Grocery1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/grocery");
+            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/grocery");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -53,7 +53,7 @@ const Grocery1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-5-zlsf.onrender.com/grocery", item, {
+        axios.post("https://demo-deployment2-7-bbpl.onrender.com/grocery", item, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(() => {

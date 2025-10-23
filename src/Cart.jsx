@@ -10,31 +10,75 @@ import {
   Paper,
   CircularProgress,
   IconButton,
+  Alert,
+  Snackbar,
+  Card,
+  CardContent,
+  CardMedia,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-// Load Razorpay script function remains same
+// Load Razorpay script
 const loadRazorpay = () => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    if (window.Razorpay) {
+      resolve();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Razorpay'));
     document.body.appendChild(script);
   });
 };
 
 const Cart = () => {
   const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const [alert, setAlert] = useState({ open: false, message: "", severity: "info" });
+  const [errorDialog, setErrorDialog] = useState({ open: false, message: "", showDemoOption: false });
   const { data, setData } = useCartContext();
   const userId = localStorage.getItem("userId");
 
-  const getAuthToken = () => localStorage.getItem("token");
+  const getAuthToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    return token;
+  };
+
   const token = getAuthToken();
-  const userName = localStorage.getItem("userName") || "Venkat";
-  const userEmail = localStorage.getItem("userEmail") || "venkat@example.com";
+  const userName = localStorage.getItem("userName") || "Customer";
+  const userEmail = localStorage.getItem("userEmail") || "customer@example.com";
   const navigate = useNavigate();
+
+  const showAlert = (message, severity = "info") => {
+    setAlert({ open: true, message, severity });
+  };
+
+  const showErrorDialog = (message, showDemoOption = false) => {
+    setErrorDialog({ open: true, message, showDemoOption });
+  };
+
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    if (!userId || !token) {
+      showAlert("Please login to access your cart", "warning");
+      navigate("/login");
+      return;
+    }
+  }, [userId, token, navigate]);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -44,29 +88,36 @@ const Cart = () => {
       }
       try {
         const response = await axios.get(
-          `https://demo-deployment2-5-zlsf.onrender.com/api/cart/${userId}`,
+          `https://demo-deployment2-7-bbpl.onrender.com/api/cart/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
+            timeout: 10000,
           }
         );
 
         const cartData = response.data;
+        let cartItems = [];
 
-        if (cartData.items) setData(cartData.items);
-        else if (Array.isArray(cartData)) setData(cartData);
-        else if (cartData.cart) setData(cartData.cart.items || []);
-        else setData([]);
+        if (cartData.items) cartItems = cartData.items;
+        else if (Array.isArray(cartData)) cartItems = cartData;
+        else if (cartData.cart) cartItems = cartData.cart.items || [];
 
+        setData(cartItems);
         setLoading(false);
       } catch (error) {
+        console.error("Cart fetch error:", error);
         if (error.response?.status === 401) {
-          alert("Please log in again.");
+          showAlert("Session expired. Please login again.", "error");
           localStorage.removeItem("userId");
           localStorage.removeItem("token");
+          localStorage.removeItem("userName");
+          localStorage.removeItem("userEmail");
           navigate("/login");
+        } else {
+          showAlert("Failed to load cart. Please try again.", "error");
         }
         setLoading(false);
       }
@@ -80,7 +131,7 @@ const Cart = () => {
 
     try {
       await axios.put(
-        `https://demo-deployment2-5-zlsf.onrender.com/api/cart/update/${userId}/${itemId}`,
+        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/update/${userId}/${itemId}`,
         null,
         {
           params: { qty: newQty },
@@ -97,14 +148,14 @@ const Cart = () => {
         )
       );
     } catch (error) {
-      alert("Failed to update quantity.");
+      showAlert("Failed to update quantity", "error");
     }
   };
 
   const handleRemoveItem = async (itemId) => {
     try {
       await axios.delete(
-        `https://demo-deployment2-5-zlsf.onrender.com/api/cart/delete/${userId}/${itemId}`,
+        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/delete/${userId}/${itemId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,8 +165,9 @@ const Cart = () => {
       );
 
       setData((prev) => prev.filter((item) => item.id !== itemId));
+      showAlert("Item removed from cart", "success");
     } catch (error) {
-      alert("Failed to remove item from cart.");
+      showAlert("Failed to remove item from cart", "error");
     }
   };
 
@@ -143,49 +195,96 @@ const Cart = () => {
     }, 0);
   };
 
+  const calculateItemTotal = (item) => {
+    const product =
+      item.menClothing ||
+      item.womenClothing ||
+      item.kidsClothing ||
+      item.grocery ||
+      item.cosmetics ||
+      item.footwear ||
+      item.electronics ||
+      item.laptops ||
+      item.mobiles ||
+      item.toys ||
+      item;
+
+    const price = product?.price || item.price || 0;
+    const quantity = item.qty || item.quantity || 1;
+    return price * quantity;
+  };
+
+  const createDemoOrder = () => {
+    const orderId = `demo_${Date.now()}`;
+    showAlert("Order created in demo mode", "info");
+
+    // Clear cart after successful order
+    setData([]);
+
+    navigate("/invoice", {
+      state: {
+        cartItems: [...data], // Create a copy of the data
+        orderId: orderId,
+        total: calculateTotal(),
+        paymentStatus: "DEMO_SUCCESS",
+        isDemo: true
+      }
+    });
+  };
+
   const handlePayment = async () => {
     if (!data || data.length === 0) {
-      alert("Your cart is empty!");
+      showAlert("Your cart is empty!", "warning");
       return;
     }
 
+    if (!userId || !token) {
+      showAlert("Please login to proceed with payment", "warning");
+      navigate("/login");
+      return;
+    }
+
+    setProcessing(true);
     try {
       await loadRazorpay();
 
+      // Create order using your backend API
       const orderResponse = await axios.post(
-        "https://demo-deployment2-5-zlsf.onrender.com/createOrder",
+        "https://demo-deployment2-7-bbpl.onrender.com/api/payment/createOrder",
         {
-          userId,
+          userId: parseInt(userId),
           amount: calculateTotal(),
-          name: userName,
-          email: userEmail,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          timeout: 15000,
         }
       );
 
-      const { orderId, order } = orderResponse.data;
+      const orderData = orderResponse.data;
 
+      console.log("Order response:", orderData);
+
+      // Handle real Razorpay payment
       const options = {
         key: "rzp_test_fNhXlhgX3Ai8dA",
-        amount: calculateTotal() * 100,
-        currency: "INR",
-        name: "Venkat ecommercesite",
-        description: "Test Transaction",
-        order_id: order.razorpayOrderId,
+        amount: orderData.amount,
+        currency: orderData.currency || "INR",
+        name: "Ecommerce Store",
+        description: "Order Payment",
+        order_id: orderData.orderId,
         handler: async (response) => {
           try {
+            // Verify payment with your backend
             const verifyResponse = await axios.post(
-              "https://demo-deployment2-5-zlsf.onrender.com/paymentCallback",
+              "https://demo-deployment2-7-bbpl.onrender.com/api/payment/verifyPayment",
               {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                user_id: userId,
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
               },
               {
                 headers: {
@@ -195,191 +294,283 @@ const Cart = () => {
               }
             );
 
-            if (verifyResponse.data === "Payment successful") {
-              alert("Payment successful! Your invoice has been generated.");
-              navigate("/invoice", { state: { cartItems: data, orderId } });
+            if (verifyResponse.data.status === "Payment Verified") {
+              showAlert("Payment successful! Your order has been placed.", "success");
+              // Clear cart after successful payment
+              setData([]);
+              navigate("/invoice", {
+                state: {
+                  cartItems: [...data],
+                  orderId: response.razorpay_order_id,
+                  paymentId: response.razorpay_payment_id,
+                  total: calculateTotal(),
+                  paymentStatus: "SUCCESS",
+                  isDemo: false
+                }
+              });
             } else {
-              alert("Payment verification failed. Please try again.");
+              showAlert("Payment verification failed. Please try again.", "error");
             }
-          } catch {
-            alert("Payment verification failed. Please contact support.");
+          } catch (error) {
+            console.error("Payment verification error:", error);
+            showAlert("Payment verification failed. Please contact support.", "error");
           }
         },
-        theme: { color: "#3399cc" },
-        prefill: { name: userName, email: userEmail },
+        prefill: {
+          name: userName,
+          email: userEmail,
+          contact: "9999999999"
+        },
+        theme: {
+          color: "#3399cc"
+        },
+        modal: {
+          ondismiss: () => {
+            showAlert("Payment cancelled", "info");
+            setProcessing(false);
+          }
+        }
       };
 
       const razorpay = new window.Razorpay(options);
       razorpay.open();
-    } catch {
-      alert("Failed to process the payment. Please try again.");
+
+    } catch (error) {
+      console.error("Payment error details:", error);
+
+      if (error.code === 'NETWORK_ERROR' || !error.response) {
+        showErrorDialog(
+          "Network error: Please check your internet connection and try again.",
+          true
+        );
+      } else if (error.response?.status === 500) {
+        showErrorDialog(
+          "Payment service is currently unavailable. The server encountered an error while processing your payment.",
+          true
+        );
+      } else if (error.response?.status === 401) {
+        showAlert("Session expired. Please login again.", "error");
+        localStorage.clear();
+        navigate("/login");
+      } else {
+        showErrorDialog(
+          `Payment failed: ${error.response?.data?.message || error.message}`,
+          true
+        );
+      }
+    } finally {
+      setProcessing(false);
     }
   };
 
+  const handleDemoMode = () => {
+    setErrorDialog({ open: false, message: "", showDemoOption: false });
+    createDemoOrder();
+  };
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialog({ open: false, message: "", showDemoOption: false });
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Box sx={{ textAlign: "center", mt: 8, p: 3 }}>
+        <Typography variant="h4" gutterBottom color="text.secondary">
+          Your Cart is Empty
+        </Typography>
+        <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
+          Start shopping to add items to your cart
+        </Typography>
+        <Button
+          variant="contained"
+          size="large"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/userdashboard")}
+          sx={{ mt: 2 }}
+        >
+          Continue Shopping
+        </Button>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: "auto" }}>
-      <Typography variant="h4" gutterBottom textAlign="center">
-        Shopping Cart
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: "auto", minHeight: "100vh" }}>
+      <Typography variant="h4" gutterBottom textAlign="center" sx={{ mb: 4, fontWeight: "bold" }}>
+        🛒 Shopping Cart
       </Typography>
 
-      {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : !data || data.length === 0 ? (
-        <Typography variant="h6" textAlign="center" color="text.secondary" sx={{ mt: 4 }}>
-          Your cart is empty.
-        </Typography>
-      ) : (
-        <>
-          <Grid container spacing={2}>
-            {data.map((item, index) => {
-              const product =
-                item.menClothing ||
-                item.womenClothing ||
-                item.kidsClothing ||
-                item.grocery ||
-                item.cosmetics ||
-                item.footwear ||
-                item.electronics ||
-                item.laptops ||
-                item.mobiles ||
-                item.toys ||
-                item;
+      <Grid container spacing={3}>
+        {/* Cart Items */}
+        <Grid item xs={12} md={8}>
+          {data.map((item, index) => {
+            const product =
+              item.menClothing ||
+              item.womenClothing ||
+              item.kidsClothing ||
+              item.grocery ||
+              item.cosmetics ||
+              item.footwear ||
+              item.electronics ||
+              item.laptops ||
+              item.mobiles ||
+              item.toys ||
+              item;
 
-              return (
-                <Grid item xs={12} sm={6} md={4} key={item.id || index}>
-                  <Paper
-                    elevation={3}
-                    sx={{
-                      p: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "100%",
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={product?.image || item.image || "https://via.placeholder.com/150"}
-                      alt={product?.name || "Product Image"}
-                      sx={{
-                        height: 150,
-                        objectFit: "contain",
-                        mb: 2,
-                        borderRadius: 1,
-                        bgcolor: "background.paper",
-                      }}
-                      onError={(e) => {
-                        e.target.src = "https://via.placeholder.com/150";
-                      }}
-                    />
+            const itemTotal = calculateItemTotal(item);
 
-                    <Typography variant="h6" component="h3" noWrap>
-                      {product?.name || "Unknown Product"}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        flexGrow: 1,
-                        mt: 1,
-                        mb: 1,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: "vertical",
-                      }}
-                    >
-                      {product?.description || item.description || "No description available."}
+            return (
+              <Card key={item.id || index} sx={{ mb: 2, display: 'flex' }}>
+                <CardMedia
+                  component="img"
+                  sx={{ width: 120, objectFit: 'cover' }}
+                  image={product?.image || item.image || "https://via.placeholder.com/150"}
+                  alt={product?.name || "Product Image"}
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
+                />
+                <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant="h6" component="h3" noWrap>
+                    {product?.name || "Unknown Product"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ flexGrow: 1, mt: 1 }}>
+                    {product?.description || item.description || "No description available."}
+                  </Typography>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                    <Typography variant="h6" color="primary">
+                      ₹{product?.price || item.price || "N/A"}
                     </Typography>
 
-                    <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
-                      Price: ₹{product?.price || item.price || "N/A"}
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        mb: 1,
-                      }}
-                    >
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <IconButton
-                          size="small"
-                          onClick={() =>
-                            handleQuantityChange(item.id, (item.qty || item.quantity) - 1)
-                          }
-                          disabled={(item.qty || item.quantity) <= 1}
-                        >
-                          <RemoveIcon />
-                        </IconButton>
-                        <Typography
-                          variant="body1"
-                          sx={{ mx: 1, minWidth: 24, textAlign: "center" }}
-                        >
-                          {item.qty || item.quantity || 1}
-                        </Typography>
-                        <IconButton
-                          size="small"
-                          onClick={() =>
-                            handleQuantityChange(item.id, (item.qty || item.quantity) + 1)
-                          }
-                        >
-                          <AddIcon />
-                        </IconButton>
-                      </Box>
-
-                      <Button
-                        variant="outlined"
-                        color="error"
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton
                         size="small"
-                        startIcon={<DeleteIcon />}
-                        onClick={() => handleRemoveItem(item.id)}
+                        onClick={() => handleQuantityChange(item.id, (item.qty || item.quantity) - 1)}
+                        disabled={(item.qty || item.quantity) <= 1}
                       >
-                        Remove
-                      </Button>
+                        <RemoveIcon />
+                      </IconButton>
+                      <Typography variant="body1" sx={{ minWidth: 40, textAlign: 'center' }}>
+                        {item.qty || item.quantity || 1}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleQuantityChange(item.id, (item.qty || item.quantity) + 1)}
+                      >
+                        <AddIcon />
+                      </IconButton>
                     </Box>
-                  </Paper>
-                </Grid>
-              );
-            })}
-          </Grid>
 
-          <Box
-            sx={{
-              mt: 4,
-              p: 3,
-              bgcolor: "background.paper",
-              borderRadius: 2,
-              boxShadow: 3,
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h6" sx={{ mb: { xs: 2, sm: 0 } }}>
-              Total: ₹{calculateTotal()}
+                    <Typography variant="h6" sx={{ minWidth: 100, textAlign: 'right' }}>
+                      ₹{itemTotal}
+                    </Typography>
+
+                    <IconButton
+                      color="error"
+                      onClick={() => handleRemoveItem(item.id)}
+                      sx={{ ml: 2 }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Grid>
+
+        {/* Order Summary */}
+        <Grid item xs={12} md={4}>
+          <Paper elevation={3} sx={{ p: 3, position: 'sticky', top: 20 }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Order Summary
             </Typography>
 
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/userdashboard")}
-              >
-                Continue Shopping
-              </Button>
-              <Button variant="contained" color="success" onClick={handlePayment}>
-                Proceed to Pay
-              </Button>
+            <Box sx={{ my: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography>Items ({data.length})</Typography>
+                <Typography>₹{calculateTotal()}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography>Shipping</Typography>
+                <Typography color="success.main">FREE</Typography>
+              </Box>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="h6">Total Amount</Typography>
+                <Typography variant="h6" color="primary">
+                  ₹{calculateTotal()}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        </>
-      )}
+
+            <Button
+              variant="contained"
+              color="success"
+              size="large"
+              fullWidth
+              startIcon={<ShoppingCartCheckoutIcon />}
+              onClick={handlePayment}
+              disabled={processing || data.length === 0}
+              sx={{ py: 1.5, mb: 2 }}
+            >
+              {processing ? <CircularProgress size={24} /> : "Proceed to Payment"}
+            </Button>
+
+            <Button
+              variant="outlined"
+              size="large"
+              fullWidth
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/userdashboard")}
+            >
+              Continue Shopping
+            </Button>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Error Dialog */}
+      <Dialog open={errorDialog.open} onClose={handleCloseErrorDialog}>
+        <DialogTitle>Payment Error</DialogTitle>
+        <DialogContent>
+          <Typography>{errorDialog.message}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseErrorDialog}>
+            Cancel
+          </Button>
+          {errorDialog.showDemoOption && (
+            <Button onClick={handleDemoMode} variant="contained" color="primary">
+              Continue in Demo Mode
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={6000}
+        onClose={() => setAlert({ ...alert, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setAlert({ ...alert, open: false })}
+          severity={alert.severity}
+          sx={{ width: '100%' }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

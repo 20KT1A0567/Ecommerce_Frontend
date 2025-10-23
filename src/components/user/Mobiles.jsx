@@ -36,7 +36,7 @@ const Mobiles = () => {
 
     const getMobiles = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/user/mobiles", {
+            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/user/mobiles", {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
             setMobiles(res.data);

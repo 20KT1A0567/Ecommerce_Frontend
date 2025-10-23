@@ -24,7 +24,7 @@ const UserList = () => {
 
   useEffect(() => {
     axios
-      .get("https://demo-deployment2-5-zlsf.onrender.com/admin/users")
+      .get("https://demo-deployment2-7-bbpl.onrender.com/admin/users")
       .then((response) => {
         setUsers(response.data);
       })
@@ -36,7 +36,7 @@ const UserList = () => {
 
   const updateUserRole = (id, newRole) => {
     axios
-      .put(`https://demo-deployment2-5-zlsf.onrender.com/admin/users/${id}/role`, {
+      .put(`https://demo-deployment2-7-bbpl.onrender.com/admin/users/${id}/role`, {
         role: newRole,
       })
       .then((response) => {

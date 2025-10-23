@@ -62,7 +62,7 @@ const Displaylaptops = () => {
 
     try {
       await axios.post(
-        `https://demo-deployment2-5-zlsf.onrender.com/api/cart/add/${userId}/laptops/${item.id}`,
+        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/add/${userId}/laptops/${item.id}`,
         null,
         {
           params: { qty: quantity },

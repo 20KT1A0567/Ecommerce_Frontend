@@ -33,7 +33,7 @@ const Groceries = () => {
 
     const getGroceries = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/user/grocery", {
+            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/user/grocery", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

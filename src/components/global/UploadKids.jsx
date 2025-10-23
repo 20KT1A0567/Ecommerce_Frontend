@@ -44,7 +44,7 @@ const UploadKids = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/admin/kids", {
+            const response = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/admin/kids", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setItems(response.data);
@@ -91,7 +91,7 @@ const UploadKids = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://demo-deployment2-5-zlsf.onrender.com/admin/upload/kids", formData, {
+            await axios.post("https://demo-deployment2-7-bbpl.onrender.com/admin/upload/kids", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -114,7 +114,7 @@ const UploadKids = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`https://demo-deployment2-5-zlsf.onrender.com/admin/delete/kids/${id}`, {
+            await axios.delete(`https://demo-deployment2-7-bbpl.onrender.com/admin/delete/kids/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert("Kids deleted successfully!");
@@ -158,7 +158,7 @@ const UploadKids = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.put(
-                `https://demo-deployment2-5-zlsf.onrender.com/admin/update/kids/${selectedItem.id}`,
+                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/kids/${selectedItem.id}`,
                 formData,
                 {
                     headers: {

@@ -42,7 +42,7 @@ const UploadToys = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://demo-deployment2-5-zlsf.onrender.com/admin/toys",
+                "https://demo-deployment2-7-bbpl.onrender.com/admin/toys",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ const UploadToys = () => {
         try {
             setSubmitLoading(true);
             await axios.post(
-                "https://demo-deployment2-5-zlsf.onrender.com/admin/upload/toys",
+                "https://demo-deployment2-7-bbpl.onrender.com/admin/upload/toys",
                 formData,
                 {
                     headers: {
@@ -121,7 +121,7 @@ const UploadToys = () => {
         const token = localStorage.getItem("token");
         try {
             await axios.delete(
-                `https://demo-deployment2-5-zlsf.onrender.com/admin/delete/toys/${id}`,
+                `https://demo-deployment2-7-bbpl.onrender.com/admin/delete/toys/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ const UploadToys = () => {
         try {
             setEditLoading(true);
             const response = await axios.put(
-                `https://demo-deployment2-5-zlsf.onrender.com/admin/update/toys/${selectedToy.id}`,
+                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/toys/${selectedToy.id}`,
                 formData,
                 {
                     headers: {

@@ -97,7 +97,7 @@ const UserDashboard = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://your-backend-api.com/api/products/search?query=${searchQuery}`
+        `https://demo-deployment2-7-bbpl.onrender.com/api/products/search?query=${searchQuery}`
       );
 
       const results = Array.isArray(response.data)

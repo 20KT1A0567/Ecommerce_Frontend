@@ -1,245 +1,203 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import html2pdf from "html2pdf.js";
-
 import {
   Box,
   Typography,
+  Paper,
   Button,
-  Grid,
-  Container,
-  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Divider,
+  Chip,
 } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
+import HomeIcon from "@mui/icons-material/Home";
 
 const Invoice = () => {
-  const [orderDetails, setOrderDetails] = useState({
-    items: [],
-    id: "",
-    amount: 0,
-  });
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   const location = useLocation();
   const navigate = useNavigate();
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const orderId = location.state?.orderId || "";
-  const userId = localStorage.getItem("userId");
+  const { cartItems, orderId, paymentId, total, paymentStatus, isDemo } = location.state || {};
 
-  const clearCartAndNavigate = (isBackToDashboard = false) => {
-    axios
-      .delete(`https://demo-deployment2-5-zlsf.onrender.com/api/cart/clear/${userId}`)
-      .then(() => {
-        setCartItems([]);
-        if (isBackToDashboard) {
-          navigate("/userdashboard");
-        } else {
-          navigate(`/invoice?orderId=${orderId}`);
-        }
-      })
-      .catch((error) => {
-        console.error("Error clearing the cart:", error);
-        alert("Failed to clear the cart. Please try again.");
-      });
-  };
-
-  const handleBackToDashboard = () => {
-    setTimeout(() => {
-      clearCartAndNavigate(true);
-    }, 1000);
-  };
-
-  const fetchCartData = async () => {
-    if (!userId) {
-      setLoading(false);
+  useEffect(() => {
+    if (!location.state) {
+      navigate("/cart");
       return;
     }
-    try {
-      const response = await axios.get(`https://demo-deployment2-5-zlsf.onrender.com/api/cart/${userId}`);
-      setCartItems(response.data.items || []);
-    } catch (error) {
-      console.error("Error fetching cart data:", error);
-    } finally {
-      setLoading(false);
+
+    if (isDemo) {
+      setOrderDetails({
+        orderId,
+        status: "COMPLETED",
+        paymentStatus: "DEMO_SUCCESS",
+        total: total,
+        items: cartItems || [],
+        createdAt: new Date().toISOString(),
+      });
+      return;
     }
-  };
 
-  useEffect(() => {
-    if (!orderId) return;
-
-    const fetchOrderDetails = async () => {
-      try {
-        const response = await axios.get(`https://demo-deployment2-5-zlsf.onrender.com/orders/${orderId}`);
-        setOrderDetails(response.data);
-      } catch (error) {
-        console.error("Error fetching order details:", error);
-        alert("Unable to fetch order details.");
-      }
-    };
-
-    fetchOrderDetails();
-  }, [orderId]);
-
-  useEffect(() => {
-    fetchCartData();
-  }, [userId]);
+    setOrderDetails({
+      orderId,
+      paymentId,
+      status: "COMPLETED",
+      paymentStatus: paymentStatus || "SUCCESS",
+      total: total,
+      items: cartItems || [],
+      createdAt: new Date().toISOString(),
+    });
+  }, [location.state, navigate, orderId, paymentId, total, paymentStatus, isDemo, cartItems]);
 
   const handleDownload = () => {
-    const invoiceElement = document.getElementById("invoice-to-download");
-    const opt = {
-      margin: 0.5,
-      filename: `Invoice_${orderId}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-    html2pdf().from(invoiceElement).set(opt).save();
+    const invoiceContent = `
+      INVOICE
+      Order ID: ${orderDetails?.orderId}
+      Date: ${new Date(orderDetails?.createdAt).toLocaleDateString()}
+      Status: ${orderDetails?.paymentStatus}
+      
+      ITEMS:
+      ${orderDetails?.items.map(item => {
+        const product = item.menClothing || item.womenClothing || item.kidsClothing || 
+                        item.grocery || item.cosmetics || item.footwear || 
+                        item.electronics || item.laptops || item.mobiles || item.toys || item;
+        return `${product?.name || 'Product'} - ₹${product?.price || item.price} x ${item.qty || item.quantity || 1}`;
+      }).join('\n      ')}
+      
+      TOTAL: ₹${orderDetails?.total}
+      
+      Thank you for your purchase!
+    `;
+
+    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `invoice-${orderDetails?.orderId}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
-  const filteredItems = cartItems.map((item) => {
-    const category = Object.keys(item).find(
-      (key) => !["id", "price", "qty"].includes(key) && item[key] !== null
+  if (!orderDetails) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+        <Typography>Loading invoice...</Typography>
+      </Box>
     );
-
-    return {
-      ...item,
-      name: item[category]?.name || "Unknown Item",
-      description: item[category]?.description || "",
-      image: item[category]?.image || "https://via.placeholder.com/150",
-    };
-  });
+  }
 
   return (
-    <Container
-      maxWidth="md"
-      id="invoice-to-download"
-      sx={{
-        mt: 4,
-        mb: 6,
-        p: 3,
-        border: "1px solid #ccc",
-        borderRadius: 2,
-        backgroundColor: "#fafafa",
-      }}
-    >
-      <Typography variant="h4" align="center" gutterBottom>
-        Invoice
-      </Typography>
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: "auto" }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        {/* Header */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+          <Typography variant="h4" component="h1" fontWeight="bold">
+            INVOICE
+          </Typography>
+          <Chip 
+            label={isDemo ? "DEMO ORDER" : "PAID"} 
+            color={isDemo ? "secondary" : "success"} 
+            variant="outlined"
+          />
+        </Box>
 
-      <Typography variant="subtitle1" align="center" gutterBottom>
-        Order ID: <strong>{orderId || "N/A"}</strong>
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
-        Total Amount: ₹{orderDetails.amount || 0}
-      </Typography>
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Items Purchased
-        </Typography>
-
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-            <CircularProgress />
+        {/* Order Info */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Order Details
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Typography><strong>Order ID:</strong> {orderDetails.orderId}</Typography>
+            {orderDetails.paymentId && (
+              <Typography><strong>Payment ID:</strong> {orderDetails.paymentId}</Typography>
+            )}
+            <Typography><strong>Date:</strong> {new Date(orderDetails.createdAt).toLocaleString()}</Typography>
+            <Typography><strong>Status:</strong> {orderDetails.paymentStatus}</Typography>
           </Box>
-        ) : filteredItems.length > 0 ? (
-          <Grid container spacing={3}>
-            {filteredItems.map((item, index) => (
-              <Grid item xs={12} sm={6} key={index}>
-                <Box
-                  sx={{
-                    border: "1px solid #ddd",
-                    borderRadius: 2,
-                    p: 2,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={item.image}
-                    alt={item.name}
-                    sx={{
-                      width: "100%",
-                      maxWidth: 180,
-                      height: "auto",
-                      mb: 2,
-                      borderRadius: 1,
-                      objectFit: "contain",
-                    }}
-                  />
-                  <Typography variant="subtitle1" fontWeight="bold" noWrap>
-                    {item.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      mt: 1,
-                      mb: 1,
-                      textAlign: "center",
-                      height: 40,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                    }}
-                  >
-                    {item.description}
-                  </Typography>
-                  <Typography variant="body1">
-                    Qty: {item.qty} &nbsp; x &nbsp; ₹{item.price}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Typography>No items found in this order.</Typography>
-        )}
-      </Box>
+        </Box>
 
-      <Typography
-        variant="h6"
-        align="center"
-        sx={{ mt: 6, fontStyle: "italic", color: "text.secondary" }}
-      >
-        Thank you for shopping with us!
-      </Typography>
+        <Divider sx={{ my: 2 }} />
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 3,
-          mt: 4,
-          flexWrap: "wrap",
-        }}
-      >
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleBackToDashboard}
-          sx={{ minWidth: 150 }}
-        >
-          Back to Dashboard
-        </Button>
+        {/* Items Table */}
+        <Typography variant="h6" gutterBottom>
+          Order Items
+        </Typography>
+        <TableContainer component={Paper} variant="outlined">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Product</TableCell>
+                <TableCell align="right">Price</TableCell>
+                <TableCell align="right">Quantity</TableCell>
+                <TableCell align="right">Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orderDetails.items.map((item, index) => {
+                const product = item.menClothing || item.womenClothing || item.kidsClothing || 
+                              item.grocery || item.cosmetics || item.footwear || 
+                              item.electronics || item.laptops || item.mobiles || item.toys || item;
+                const price = product?.price || item.price || 0;
+                const quantity = item.qty || item.quantity || 1;
+                const itemTotal = price * quantity;
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleDownload}
-          sx={{ minWidth: 150 }}
-        >
-          Download Invoice
-        </Button>
-      </Box>
-    </Container>
+                return (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight="medium">
+                        {product?.name || "Product"}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">₹{price}</TableCell>
+                    <TableCell align="right">{quantity}</TableCell>
+                    <TableCell align="right">₹{itemTotal}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Total */}
+        <Box sx={{ mt: 3, textAlign: "right" }}>
+          <Typography variant="h5" fontWeight="bold">
+            Total: ₹{orderDetails.total}
+          </Typography>
+          {isDemo && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              * This is a demo order for testing purposes
+            </Typography>
+          )}
+        </Box>
+
+        <Divider sx={{ my: 3 }} />
+
+        {/* Actions */}
+        <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
+          <Button
+            variant="contained"
+            startIcon={<DownloadIcon />}
+            onClick={handleDownload}
+            size="large"
+          >
+            Download Invoice
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<HomeIcon />}
+            onClick={() => navigate("/userdashboard")}
+            size="large"
+          >
+            Back to Home
+          </Button>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
