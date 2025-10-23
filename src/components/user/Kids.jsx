@@ -1,9 +1,31 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import './Products.css';
-import "./user.css";
-import logo from '../user/image.png';
+import {
+    Box,
+    AppBar,
+    Toolbar,
+    Typography,
+    TextField,
+    IconButton,
+    InputAdornment,
+    Button,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    CardActions,
+    Select,
+    MenuItem,
+    FormControl,
+    CircularProgress,
+    Container,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../user/image.png";
 
 const Kids = () => {
     const [kidsProducts, setKidsProducts] = useState([]);
@@ -14,9 +36,10 @@ const Kids = () => {
     const [sortOption, setSortOption] = useState("");
     const [showSortOptions, setShowSortOptions] = useState(false);
     const navigate = useNavigate();
+
     const getKidsProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-12.onrender.com/user/kids", {
+            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/user/kids", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -34,6 +57,7 @@ const Kids = () => {
     useEffect(() => {
         getKidsProducts();
     }, []);
+
     const filteredKidsProducts = kidsProducts.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -60,7 +84,8 @@ const Kids = () => {
         setShowSortOptions(false);
     };
 
-    const handleAddToCart = (item) => {
+    const handleAddToCart = (item, e) => {
+        e.stopPropagation(); // prevent card click event
         const token = localStorage.getItem("token");
         if (!token) {
             navigate("/login");
@@ -84,87 +109,172 @@ const Kids = () => {
         navigate("/kidsdetails", { state: { item } });
     };
 
-    const handleLogoClick = () => {
-        localStorage.removeItem('token');
-        navigate('/');
+    const handleLogoutClick = () => {
+        localStorage.removeItem("token");
+        navigate("/");
     };
 
     return (
         <>
-            <div className="shopping-app">
-                <div className="app-header">
-                    <div className="logo">
-                        <img src={logo} width={200} height={100} alt="Logo" />
-                    </div>
-                    <div>
-                        <input
-                            type="search"
-                            placeholder="Search products"
-                            className="search-bar"
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                        />
-                    </div>
-                    <div className="filter-container">
-                        <button className="filter-btn" onClick={() => setShowSortOptions(!showSortOptions)}>
-                            Filter
-                        </button>
-                        {showSortOptions && (
-                            <div className="sort-options">
-                                <select className="sort-dropdown" value={sortOption} onChange={handleSortChange}>
-                                    <option value="">Sort by</option>
-                                    <option value="name-asc">Name: A-Z</option>
-                                    <option value="name-desc">Name: Z-A</option>
-                                    <option value="price-asc">Price: Low to High</option>
-                                    <option value="price-desc">Price: High to Low</option>
-                                </select>
-                            </div>
-                        )}
-                    </div>
-                    <div className="cartlogin">
-                        <Link to="/" onClick={handleLogoClick}>
-                            <img
-                                src="https://www.shutterstock.com/image-vector/logout-button-260nw-312305171.jpg"
-                                width={50}
-                                height={50}
-                                className="login"
-                                alt="Logout"
-                            />
-                        </Link>
-                        <Link to="/cart">
-                            <img
-                                src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg"
-                                width={100}
-                                height={100}
-                                className="login"
-                                alt="Cart"
-                            />
-                        </Link>
-                    </div>
-                </div>
-            </div>
+            {/* Header */}
+            <AppBar position="sticky" color="primary">
+                <Toolbar sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
+                    <Box
+                        sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+                        onClick={() => navigate("/")}
+                    >
+                        <img src={logo} alt="Logo" width={120} height={60} />
+                        <Typography variant="h6" sx={{ ml: 2, color: "white" }}>
+                            Kids Shop
+                        </Typography>
+                    </Box>
 
-            <div className="product-container">
+                    {/* Search */}
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Search products"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        sx={{ bgcolor: "white", borderRadius: 1, width: { xs: "100%", sm: 300 } }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+
+                    {/* Filter */}
+                    <Box sx={{ position: "relative" }}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<FilterListIcon />}
+                            onClick={() => setShowSortOptions((prev) => !prev)}
+                        >
+                            Filter
+                        </Button>
+                        {showSortOptions && (
+                            <FormControl
+                                size="small"
+                                sx={{
+                                    position: "absolute",
+                                    top: "100%",
+                                    right: 0,
+                                    mt: 1,
+                                    bgcolor: "background.paper",
+                                    boxShadow: 3,
+                                    borderRadius: 1,
+                                    minWidth: 160,
+                                    zIndex: 10,
+                                }}
+                            >
+                                <Select value={sortOption} onChange={handleSortChange} displayEmpty>
+                                    <MenuItem value="">Sort by</MenuItem>
+                                    <MenuItem value="name-asc">Name: A-Z</MenuItem>
+                                    <MenuItem value="name-desc">Name: Z-A</MenuItem>
+                                    <MenuItem value="price-asc">Price: Low to High</MenuItem>
+                                    <MenuItem value="price-desc">Price: High to Low</MenuItem>
+                                </Select>
+                            </FormControl>
+                        )}
+                    </Box>
+
+                    {/* Logout and Cart */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <IconButton color="inherit" onClick={handleLogoutClick} aria-label="logout">
+                            <LogoutIcon />
+                        </IconButton>
+                        <IconButton
+                            component={Link}
+                            to="/cart"
+                            color="inherit"
+                            aria-label="cart"
+                            size="large"
+                        >
+                            <ShoppingCartIcon fontSize="large" />
+                        </IconButton>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+
+            {/* Main Content */}
+            <Container sx={{ py: 4, maxWidth: "lg" }}>
                 {loading ? (
-                    <div className="loading-message">Loading kids' products...</div>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            minHeight: 300,
+                        }}
+                    >
+                        <CircularProgress />
+                        <Typography sx={{ ml: 2 }}>Loading kids' products...</Typography>
+                    </Box>
                 ) : error ? (
-                    <div className="error-message">{error}</div>
-                ) : sortedKidsProducts.length > 0 ? (
-                    sortedKidsProducts.map((item) => (
-                        <div key={item.id} className="product-card" onClick={() => displaySingleItem(item)}>
-                            <img src={item.image} alt={item.name} className="product-image" />
-                            <div className="name">{item.name}</div>
-                            <div className="description">{item.description}</div>
-                            <div className="price">Price: ₹{item.price}</div>
-                            <button onClick={(e) => { handleAddToCart(item); }} className="add-to-cart-btn">
-                                Add to Cart
-                            </button>
-                        </div>
-                    ))
+                    <Typography color="error" align="center" sx={{ mt: 4 }}>
+                        {error}
+                    </Typography>
+                ) : sortedKidsProducts.length === 0 ? (
+                    <Typography align="center" sx={{ mt: 4 }}>
+                        No kids' products available.
+                    </Typography>
                 ) : (
-                    <div className="no-data-message">No kids' products available.</div>
+                    <Grid container spacing={3}>
+                        {sortedKidsProducts.map((item) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+                                <Card
+                                    onClick={() => displaySingleItem(item)}
+                                    sx={{
+                                        height: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        cursor: "pointer",
+                                        "&:hover": { boxShadow: 6 },
+                                    }}
+                                >
+                                    <CardMedia
+                                        component="img"
+                                        height="180"
+                                        image={item.image}
+                                        alt={item.name}
+                                        sx={{ objectFit: "contain", p: 1 }}
+                                    />
+                                    <CardContent sx={{ flexGrow: 1 }}>
+                                        <Typography variant="h6" gutterBottom noWrap>
+                                            {item.name}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            sx={{ height: 40, overflow: "hidden", textOverflow: "ellipsis" }}
+                                        >
+                                            {item.description}
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                                            Price: ₹{item.price}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={(e) => handleAddToCart(item, e)}
+                                            fullWidth
+                                        >
+                                            Add to Cart
+                                        </Button>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 )}
-            </div>
+            </Container>
         </>
     );
 };

@@ -1,8 +1,27 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import './Products.css';
-import "./user.css";
-import logo from '../user/image.png';
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Box,
+    TextField,
+    Button,
+    IconButton,
+    MenuItem,
+    Select,
+    FormControl,
+    InputLabel,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    CardActions,
+    CircularProgress,
+} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import logo from "../user/image.png";
 import { Link, useNavigate } from "react-router-dom";
 
 const Women = () => {
@@ -12,11 +31,11 @@ const Women = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [cart, setCart] = useState([]);
     const [sortOption, setSortOption] = useState("");
-    const [showSortOptions, setShowSortOptions] = useState(false);
     const navigate = useNavigate();
+
     const getWomenProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-12.onrender.com/user/women", {
+            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/user/women", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -58,10 +77,10 @@ const Women = () => {
 
     const handleSortChange = (e) => {
         setSortOption(e.target.value);
-        setShowSortOptions(false);
     };
 
-    const handleAddToCart = (item) => {
+    const handleAddToCart = (item, e) => {
+        e.stopPropagation();
         const token = localStorage.getItem("token");
         if (!token) {
             navigate("/login");
@@ -85,87 +104,171 @@ const Women = () => {
         navigate("/womendetails", { state: { item } });
     };
 
-    const handleLogoClick = () => {
-        localStorage.removeItem('token');
-        navigate('/');
+    const handleLogoutClick = () => {
+        localStorage.removeItem("token");
+        navigate("/");
     };
 
     return (
         <>
-            <div className="shopping-app">
-                <div className="app-header">
-                    <div className="logo">
-                        <img src={logo} width={200} height={100} alt="Logo" />
-                    </div>
-                    <div>
-                        <input
-                            type="search"
-                            placeholder="Search products"
-                            className="search-bar"
-                            value={searchTerm}
-                            onChange={handleSearchChange}
+            {/* Header */}
+            <AppBar position="static" color="default" sx={{ mb: 3 }}>
+                <Toolbar
+                    sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "space-between",
+                        gap: 1,
+                    }}
+                >
+                    {/* Logo */}
+                    <Box
+                        sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                        onClick={handleLogoutClick}
+                    >
+                        <Box
+                            component="img"
+                            src={logo}
+                            alt="Logo"
+                            sx={{ width: 150, height: 70, objectFit: "contain" }}
                         />
-                    </div>
-                    <div className="filter-container">
-                        <button className="filter-btn" onClick={() => setShowSortOptions(!showSortOptions)}>
-                            Filter
-                        </button>
-                        {showSortOptions && (
-                            <div className="sort-options">
-                                <select className="sort-dropdown" value={sortOption} onChange={handleSortChange}>
-                                    <option value="">Sort by</option>
-                                    <option value="name-asc">Name: A-Z</option>
-                                    <option value="name-desc">Name: Z-A</option>
-                                    <option value="price-asc">Price: Low to High</option>
-                                    <option value="price-desc">Price: High to Low</option>
-                                </select>
-                            </div>
-                        )}
-                    </div>
-                    <div className="cartlogin">
-                        <Link to="/" onClick={handleLogoClick}>
-                            <img
-                                src="https://www.shutterstock.com/image-vector/logout-button-260nw-312305171.jpg"
-                                width={50}
-                                height={50}
-                                className="login"
-                                alt="Logout"
-                            />
-                        </Link>
-                        <Link to="/cart">
-                            <img
-                                src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg"
-                                width={100}
-                                height={100}
-                                className="login"
-                                alt="Cart"
-                            />
-                        </Link>
-                    </div>
-                </div>
-            </div>
+                    </Box>
 
-            <div className="product-container">
+                    {/* Search Field */}
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Search products"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        sx={{ flexGrow: 1, maxWidth: 400, minWidth: 200 }}
+                    />
+
+                    {/* Sort / Filter Select */}
+                    <FormControl size="small" sx={{ minWidth: 180 }}>
+                        <InputLabel id="sort-label">Sort By</InputLabel>
+                        <Select
+                            labelId="sort-label"
+                            value={sortOption}
+                            label="Sort By"
+                            onChange={handleSortChange}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value="name-asc">Name: A-Z</MenuItem>
+                            <MenuItem value="name-desc">Name: Z-A</MenuItem>
+                            <MenuItem value="price-asc">Price: Low to High</MenuItem>
+                            <MenuItem value="price-desc">Price: High to Low</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* Logout & Cart Buttons */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <IconButton onClick={handleLogoutClick} color="primary" aria-label="logout">
+                            <LogoutIcon />
+                        </IconButton>
+                        <Link to="/cart" aria-label="cart">
+                            <IconButton color="primary">
+                                <ShoppingCartIcon />
+                            </IconButton>
+                        </Link>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+
+            {/* Product Grid */}
+            <Box sx={{ px: { xs: 2, sm: 3, md: 5 } }}>
                 {loading ? (
-                    <div className="loading-message">Loading women's products...</div>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            mt: 6,
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 2,
+                        }}
+                    >
+                        <CircularProgress />
+                        <Typography variant="h6">Loading women's products...</Typography>
+                    </Box>
                 ) : error ? (
-                    <div className="error-message">{error}</div>
+                    <Typography
+                        variant="h6"
+                        color="error"
+                        align="center"
+                        sx={{ mt: 4 }}
+                    >
+                        {error}
+                    </Typography>
                 ) : sortedWomenProducts.length > 0 ? (
-                    sortedWomenProducts.map((item) => (
-                        <div key={item.id} className="product-card" onClick={() => displaySingleItem(item)}>
-                            <img src={item.image} alt={item.name} className="product-image" />
-                            <div className="name">{item.name}</div>
-                            <div className="description">{item.description}</div>
-                            <div className="price">Price: ₹{item.price}</div>
-                            <button onClick={(e) => { handleAddToCart(item); }} className="add-to-cart-btn">
-                                Add to Cart
-                            </button>
-                        </div>
-                    ))
+                    <Grid container spacing={3}>
+                        {sortedWomenProducts.map((item) => (
+                            <Grid
+                                item
+                                key={item.id}
+                                xs={12}
+                                sm={6}
+                                md={4}
+                                lg={3}
+                                onClick={() => displaySingleItem(item)}
+                                sx={{ cursor: "pointer" }}
+                            >
+                                <Card
+                                    sx={{
+                                        height: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        "&:hover": { boxShadow: 6 },
+                                    }}
+                                >
+                                    <CardMedia
+                                        component="img"
+                                        height="200"
+                                        image={item.image}
+                                        alt={item.name}
+                                    />
+                                    <CardContent sx={{ flexGrow: 1 }}>
+                                        <Typography gutterBottom variant="h6" component="div" noWrap>
+                                            {item.name}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            sx={{
+                                                display: "-webkit-box",
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: "vertical",
+                                                overflow: "hidden",
+                                            }}
+                                        >
+                                            {item.description}
+                                        </Typography>
+                                        <Typography variant="subtitle1" mt={1} fontWeight="bold">
+                                            ₹{item.price}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            fullWidth
+                                            onClick={(e) => handleAddToCart(item, e)}
+                                        >
+                                            Add to Cart
+                                        </Button>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 ) : (
-                    <div className="no-data-message">No women's products available.</div>
+                    <Typography variant="h6" align="center" sx={{ mt: 4 }}>
+                        No women's products available.
+                    </Typography>
                 )}
-            </div>
+            </Box>
         </>
     );
 };

@@ -1,33 +1,49 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import './Products.css';
-import "./user.css";
 import logo from '../user/image.png';
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import {
+    AppBar,
+    Toolbar,
+    Box,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    Typography,
+    Button,
+    TextField,
+    CircularProgress,
+    IconButton,
+} from "@mui/material";
 
 const Grocery1 = () => {
     const [electronics, setElectronics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-12.onrender.com/grocery");
+            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/grocery");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
-            console.error("Error fetching  Grocery:", error);
-            setError("Failed to load  Grocery data. Please try again.");
+            console.error("Error fetching Grocery:", error);
+            setError("Failed to load Grocery data. Please try again.");
         } finally {
             setLoading(false);
         }
     };
- 
-  const getAuthToken = () => {
-    return localStorage.getItem("token");
-  };
+
+    useEffect(() => {
+        getElectronics();
+    }, []);
+
+    const getAuthToken = () => localStorage.getItem("token");
+
     const handleAddToCart = (event, item) => {
         event.stopPropagation();
 
@@ -37,7 +53,7 @@ const Grocery1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-12.onrender.com/grocery", item, {
+        axios.post("https://demo-deployment2-5-zlsf.onrender.com/grocery", item, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(() => {
@@ -50,53 +66,105 @@ const Grocery1 = () => {
             });
     };
 
-    useEffect(() => {
-        getElectronics();
-    }, []);
+    // Filter products based on search
+    const filteredProducts = electronics.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <>
-            <div className="shopping-app">
-                <div className="app-header">
-                    <div className="logo">
-                        <img src={logo} width={200} height={100} alt="Logo" />
-                    </div>
-                    <div>
-                        <input type="search" placeholder="Search products" className="search-bar" />
+            {/* Header */}
+            <AppBar position="sticky" sx={{ backgroundColor: "#1976d2" }}>
+                <Toolbar sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => navigate("/")}>
+                        <img src={logo} alt="Logo" width={50} height={50} />
+                        <Typography variant="h6" sx={{ ml: 1, color: "#fff" }}>Grocery Store</Typography>
+                    </Box>
 
-                    </div>
-                    <div className="cartlogin">
-                        <Link to="/login"><img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/profile-52e0dc.svg" width={50} height={50} className="login"></img></Link>
-                        <Link to="/cart"><img src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg" width={100} height={100} className="login"></img></Link>
-                    </div>
-                </div>
-            </div>
+                    <TextField
+                        size="small"
+                        placeholder="Search products"
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        sx={{ bgcolor: "white", borderRadius: 1, flexGrow: 1, maxWidth: 400 }}
+                    />
 
-            <div className="product-container">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <Link to="/login" style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                                src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/profile-52e0dc.svg"
+                                alt="Login"
+                                width={40}
+                                height={40}
+                                style={{ cursor: "pointer" }}
+                            />
+                        </Link>
+                        <Link to="/cart" style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                                src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg"
+                                alt="Cart"
+                                width={50}
+                                height={50}
+                                style={{ cursor: "pointer" }}
+                            />
+                        </Link>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+
+            {/* Product Grid */}
+            <Box sx={{ p: { xs: 2, sm: 3, md: 5 }, maxWidth: 1200, mx: "auto" }}>
                 {loading ? (
-                    <div className="loading-message">Loading  Grocery...</div>
+                    <Box sx={{ display: "flex", justifyContent: "center", mt: 5, alignItems: "center", gap: 2 }}>
+                        <CircularProgress />
+                        <Typography variant="h6">Loading Grocery...</Typography>
+                    </Box>
                 ) : error ? (
-                    <div className="error-message">{error}</div>
-                ) : electronics.length > 0 ? (
-                    electronics.map((item) => (
-                        <div key={item.id} className="product-card">
-                            <img src={item.image} alt={item.name} className="product-image" />
-                            <div className="name">{item.name}</div>
-                            <div className="description">{item.description}</div>
-                            <div className="price">Price: ₹{item.price}</div>
-
-                            <button
-                                className="add-to-cart-btn"
-                                onClick={(event) => handleAddToCart(event, item)}
-                            >
-                                Add to Cart
-                            </button>
-                        </div>
-                    ))
+                    <Typography variant="h6" color="error" align="center" mt={5}>
+                        {error}
+                    </Typography>
+                ) : filteredProducts.length > 0 ? (
+                    <Grid container spacing={3}>
+                        {filteredProducts.map(item => (
+                            <Grid item xs={12} sm={6} md={4} key={item.id}>
+                                <Card
+                                    sx={{ cursor: "pointer", height: "100%", display: "flex", flexDirection: "column" }}
+                                    onClick={() => navigate("/grocerydetails", { state: { item } })}
+                                >
+                                    <CardMedia
+                                        component="img"
+                                        height="200"
+                                        image={item.image || "https://via.placeholder.com/300"}
+                                        alt={item.name}
+                                        sx={{ objectFit: "contain", bgcolor: "#f5f5f5" }}
+                                        onError={(e) => (e.target.src = "https://via.placeholder.com/300")}
+                                    />
+                                    <CardContent sx={{ flexGrow: 1 }}>
+                                        <Typography variant="h6" noWrap>{item.name}</Typography>
+                                        <Typography variant="body2" color="text.secondary" noWrap>{item.description}</Typography>
+                                        <Typography variant="subtitle1" mt={1} fontWeight="bold">
+                                            Price: ₹{item.price}
+                                        </Typography>
+                                    </CardContent>
+                                    <Box sx={{ p: 2 }}>
+                                        <Button
+                                            variant="contained"
+                                            fullWidth
+                                            onClick={(e) => handleAddToCart(e, item)}
+                                        >
+                                            Add to Cart
+                                        </Button>
+                                    </Box>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 ) : (
-                    <div className="no-data-message">No  Grocery available.</div>
+                    <Typography variant="h6" align="center" mt={5}>
+                        No Grocery available.
+                    </Typography>
                 )}
-            </div>
+            </Box>
         </>
     );
 };

@@ -1,60 +1,82 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import "./single.css";
-import "./user.css";
 import logo from "../user/image.png";
-import { useNavigate } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Button,
+  IconButton,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  ShoppingCart as CartIcon,
+  Logout as LogoutIcon,
+} from "@mui/icons-material";
 
 const Displaysinglecosmetics = () => {
   const location = useLocation();
   const { item } = location.state || {};
-
   const [quantity, setQuantity] = useState(1);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const navigate = useNavigate();
 
   if (!item) {
-    return <h1>Cosmetic Details not found.</h1>;
+    return (
+      <Typography variant="h5" align="center" mt={5}>
+        Cosmetic Details not found.
+      </Typography>
+    );
   }
+
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-  const getAuthToken = () => {
-    return localStorage.getItem("token");
-  };
+  const getAuthToken = () => localStorage.getItem("token");
+
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
     const token = getAuthToken();
 
     if (!userId || !token) {
-      alert("Please log in to add items to the cart.");
+      setSnackbar({ open: true, message: "Please log in to add items to your cart.", severity: "warning" });
       navigate("/login");
       return;
     }
 
     try {
-      const response = await axios.post(
-        `https://demo-deployment2-12.onrender.com/api/cart/add/${userId}/cosmetics/${item.id}`,
+      await axios.post(
+        `https://demo-deployment2-5-zlsf.onrender.com/api/cart/add/${userId}/cosmetics/${item.id}`,
         null,
-        { 
+        {
           params: { qty: quantity },
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         }
       );
-      
-      alert(`Added ${quantity} of ${item.name} to your cart!`);
+
+      setSnackbar({ open: true, message: `Added ${quantity} of ${item.name} to your cart!`, severity: "success" });
     } catch (error) {
       console.error("Add to cart error:", error);
-      
+
       if (error.response?.status === 401) {
-        alert("Your session has expired. Please log in again.");
         localStorage.removeItem("userId");
         localStorage.removeItem("token");
         navigate("/login");
+        setSnackbar({ open: true, message: "Session expired. Please log in again.", severity: "error" });
       } else {
-        alert(error.response?.data?.message || "Failed to add item to the cart.");
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.message || "Failed to add item to the cart.",
+          severity: "error",
+        });
       }
     }
   };
@@ -65,68 +87,136 @@ const Displaysinglecosmetics = () => {
     navigate("/");
   };
 
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
   return (
     <>
-      <div className="shopping-app">
-        <div className="app-header">
-          <div className="logo">
-            <img src={logo} width={200} height={100} alt="Logo" />
-          </div>
+      {/* Header AppBar */}
+      <AppBar position="sticky" sx={{ backgroundColor: "#1976d2" }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <img
+              src={logo}
+              alt="Logo"
+              width={50}
+              height={50}
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/")}
+            />
+            <Typography variant="h6" fontWeight="bold">
+              Cosmetic Store
+            </Typography>
+          </Box>
 
-          <div className="cartlogin">
-            <Link to="/" onClick={handleLogout}>
-              <img
-                src="https://www.shutterstock.com/image-vector/logout-button-260nw-312305171.jpg"
-                width={50}
-                height={50}
-                className="login"
-                alt="Logout Icon"
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <IconButton color="inherit" component={Link} to="/cart">
+              <CartIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={handleLogout}>
+              <LogoutIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Product Detail Section */}
+      <Box sx={{ padding: { xs: 2, md: 5 } }}>
+        <Grid
+          container
+          spacing={4}
+          alignItems="center"
+          justifyContent="center"
+          sx={{ maxWidth: "1200px", margin: "0 auto" }}
+        >
+          {/* Image */}
+          <Grid item xs={12} md={6}>
+            <Card sx={{ boxShadow: 4, borderRadius: 3 }}>
+              <CardMedia
+                component="img"
+                sx={{
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: 400,
+                  objectFit: "contain",
+                  borderRadius: 2,
+                }}
+                image={item.image || "https://via.placeholder.com/300"}
+                alt={item.name}
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/300";
+                }}
               />
-            </Link>
-            <Link to="/cart">
-              <img
-                src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg"
-                width={100}
-                height={100}
-                className="login"
-                alt="Cart Icon"
-              />
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="cosmetic-container">
-        <h2>{item.name} Details</h2>
-        <div className="cosmetic-card">
-          <img
-            src={item.image || "https://via.placeholder.com/300"}
-            alt={item.name || "Cosmetic Image"}
-            className="cosmetic-image"
-            onError={(e) => {
-              e.target.src = "https://via.placeholder.com/300";
-            }}
-          />
-          <div className="cosmetic-details">
-            <h3>{item.name || "N/A"}</h3>
-            <p className="cosmetic-description">{item.description || "No description available."}</p>
-            <p className="cosmetic-price">
-              <strong>Price:</strong> ₹{item.price || "N/A"}
-            </p>
-            <div className="quantity-container">
-              <button className="quantity-btn" onClick={decrementQuantity}>
-                -
-              </button>
-              <span className="quantity-display">{quantity}</span>
-              <button className="quantity-btn" onClick={incrementQuantity}>
-                +
-              </button>
-            </div>
-            <button className="add-to-cart-btn" onClick={handleAddToCart}>
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </div>
+            </Card>
+          </Grid>
+
+          {/* Details */}
+          <Grid item xs={12} md={6}>
+            <Card sx={{ padding: 3, borderRadius: 3, boxShadow: 3, background: "#fafafa" }}>
+              <CardContent>
+                <Typography variant="h5" fontWeight="bold">
+                  {item.name}
+                </Typography>
+                <Typography variant="body1" color="text.secondary" mt={1}>
+                  {item.description || "No description available."}
+                </Typography>
+                <Typography variant="h6" color="primary" mt={2}>
+                  Price: ₹{item.price || "N/A"}
+                </Typography>
+
+                {/* Quantity Controls */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 3 }}>
+                  <IconButton
+                    color="primary"
+                    onClick={decrementQuantity}
+                    sx={{ border: "1px solid #1976d2", "&:hover": { backgroundColor: "#e3f2fd" } }}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+
+                  <Typography variant="h6">{quantity}</Typography>
+
+                  <IconButton
+                    color="primary"
+                    onClick={incrementQuantity}
+                    sx={{ border: "1px solid #1976d2", "&:hover": { backgroundColor: "#e3f2fd" } }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Box>
+
+                {/* Add to Cart Button */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  fullWidth
+                  sx={{ mt: 3, py: 1.5 }}
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

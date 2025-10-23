@@ -1,33 +1,49 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import './Products.css';
-import "./user.css";
-import logo from '../user/image.png';
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import {
+    Box,
+    Typography,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    CardActions,
+    Button,
+    TextField,
+    CircularProgress,
+    IconButton,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import logo from "../user/image.png";
 
 const Toys1 = () => {
     const [electronics, setElectronics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-12.onrender.com/toys");
+            const res = await axios.get("https://demo-deployment2-5-zlsf.onrender.com/toys");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
-            console.error("Error fetching  Toys:", error);
-            setError("Failed to load  Toys data. Please try again.");
+            console.error("Error fetching Toys:", error);
+            setError("Failed to load Toys data. Please try again.");
         } finally {
             setLoading(false);
         }
     };
- 
-  const getAuthToken = () => {
-    return localStorage.getItem("token");
-  };
+
+    useEffect(() => {
+        getElectronics();
+    }, []);
+
+    const getAuthToken = () => localStorage.getItem("token");
+
     const handleAddToCart = (event, item) => {
         event.stopPropagation();
 
@@ -37,9 +53,10 @@ const Toys1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-12.onrender.com/toys", item, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
+        axios
+            .post("https://demo-deployment2-5-zlsf.onrender.com/toys", item, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
             .then(() => {
                 alert("Item added to cart successfully!");
             })
@@ -50,53 +67,126 @@ const Toys1 = () => {
             });
     };
 
-    useEffect(() => {
-        getElectronics();
-    }, []);
+    // Filter toys by search term
+    const filteredElectronics = electronics.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <>
-            <div className="shopping-app">
-                <div className="app-header">
-                    <div className="logo">
-                        <img src={logo} width={200} height={100} alt="Logo" />
-                    </div>
-                    <div>
-                        <input type="search" placeholder="Search products" className="search-bar" />
+            {/* Header */}
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    boxShadow: 1,
+                    flexWrap: "wrap",
+                    gap: 2,
+                    bgcolor: "background.paper",
+                }}
+            >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <img src={logo} alt="Logo" width={160} height={80} />
+                    <TextField
+                        variant="outlined"
+                        placeholder="Search products"
+                        size="small"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </Box>
 
-                    </div>
-                    <div className="cartlogin">
-                        <Link to="/login"><img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/profile-52e0dc.svg" width={50} height={50} className="login"></img></Link>
-                        <Link to="/cart"><img src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg" width={100} height={100} className="login"></img></Link>
-                    </div>
-                </div>
-            </div>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Link to="/login" aria-label="Login">
+                        <IconButton color="primary" size="large">
+                            <AccountCircleIcon fontSize="large" />
+                        </IconButton>
+                    </Link>
+                    <Link to="/cart" aria-label="Cart">
+                        <IconButton color="primary" size="large">
+                            <ShoppingCartIcon fontSize="large" />
+                        </IconButton>
+                    </Link>
+                </Box>
+            </Box>
 
-            <div className="product-container">
+            {/* Product Grid */}
+            <Box sx={{ p: 2 }}>
                 {loading ? (
-                    <div className="loading-message">Loading  Toys...</div>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            mt: 6,
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 2,
+                        }}
+                    >
+                        <CircularProgress />
+                        <Typography variant="h6">Loading Toys...</Typography>
+                    </Box>
                 ) : error ? (
-                    <div className="error-message">{error}</div>
-                ) : electronics.length > 0 ? (
-                    electronics.map((item) => (
-                        <div key={item.id} className="product-card">
-                            <img src={item.image} alt={item.name} className="product-image" />
-                            <div className="name">{item.name}</div>
-                            <div className="description">{item.description}</div>
-                            <div className="price">Price: ₹{item.price}</div>
-
-                            <button
-                                className="add-to-cart-btn"
-                                onClick={(event) => handleAddToCart(event, item)}
-                            >
-                                Add to Cart
-                            </button>
-                        </div>
-                    ))
+                    <Typography variant="h6" color="error" align="center" sx={{ mt: 6 }}>
+                        {error}
+                    </Typography>
+                ) : filteredElectronics.length > 0 ? (
+                    <Grid container spacing={3}>
+                        {filteredElectronics.map((item) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+                                <Card
+                                    sx={{
+                                        height: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        cursor: "default",
+                                        "&:hover": { boxShadow: 6 },
+                                    }}
+                                >
+                                    <CardMedia
+                                        component="img"
+                                        height="180"
+                                        image={item.image}
+                                        alt={item.name}
+                                        sx={{ objectFit: "contain", p: 1 }}
+                                    />
+                                    <CardContent sx={{ flexGrow: 1 }}>
+                                        <Typography
+                                            variant="h6"
+                                            component="div"
+                                            noWrap
+                                            title={item.name}
+                                        >
+                                            {item.name}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" noWrap>
+                                            {item.description}
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                                            Price: ₹{item.price}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions sx={{ justifyContent: "center", pb: 2 }}>
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            onClick={(e) => handleAddToCart(e, item)}
+                                        >
+                                            Add to Cart
+                                        </Button>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 ) : (
-                    <div className="no-data-message">No  Toys available.</div>
+                    <Typography variant="h6" align="center" sx={{ mt: 6 }}>
+                        No Toys available.
+                    </Typography>
                 )}
-            </div>
+            </Box>
         </>
     );
 };

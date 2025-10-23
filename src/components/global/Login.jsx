@@ -1,7 +1,17 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import './Login.css';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Link,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
 
 const Login = () => {
   const [error, setError] = useState('');
@@ -18,7 +28,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://demo-deployment2-12.onrender.com/api/login', {
+      const response = await axios.post('https://demo-deployment2-5-zlsf.onrender.com/api/login', {
         username: refUsername.current.value,
         password: refPassword.current.value,
       });
@@ -31,7 +41,6 @@ const Login = () => {
         localStorage.setItem('userId', id);
 
         alert(`Login successful! Welcome, ${username}`);
-        console.log(id);
         if (role === 'ROLE_USER') {
           navigate('/userdashboard');
         } else if (role === 'ROLE_ADMIN') {
@@ -50,42 +59,72 @@ const Login = () => {
   };
 
   return (
-    <div className="parent">
-      <div className="login-container">
-        <h2>Login</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <form onSubmit={handleLogin}>
-          <div className="input-group">
-            <label htmlFor="username">Username:</label>
-            <input
-              type="text"
-              id="username"
-              ref={refUsername}
-              placeholder="Enter your username"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              ref={refPassword}
-              placeholder="Enter your password"
-              required
-              disabled={loading}
-            />
-          </div>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-          <p className="ca1">
-            New to MVPSTAY STORE? <Link to="/register"><b>Create an account</b></Link>
-          </p>
-        </form>
-      </div>
-    </div>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          p: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Typography component="h1" variant="h5" mb={2}>
+          Login
+        </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Box component="form" onSubmit={handleLogin} sx={{ width: '100%' }}>
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Username"
+            inputRef={refUsername}
+            placeholder="Enter your username"
+            disabled={loading}
+            required
+            autoFocus
+          />
+
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Password"
+            type="password"
+            inputRef={refPassword}
+            placeholder="Enter your password"
+            disabled={loading}
+            required
+          />
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            sx={{ mt: 3, mb: 2 }}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+          </Button>
+
+          <Typography variant="body2" align="center">
+            New to MVPSTAY STORE?{' '}
+            <Link component={RouterLink} to="/register" underline="hover" fontWeight="bold">
+              Create an account
+            </Link>
+          </Typography>
+        </Box>
+      </Box>
+    </Container>
   );
 };
+
 export default Login;

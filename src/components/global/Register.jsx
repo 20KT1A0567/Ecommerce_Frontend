@@ -1,7 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
-import './Register.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Link,
+  CircularProgress,
+} from '@mui/material';
 
 const Register = () => {
   const refUsername = useRef(null);
@@ -10,6 +20,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,12 +30,15 @@ const Register = () => {
 
   const createAccount = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    setLoading(true);
 
     try {
-      const response = await axios.post('https://demo-deployment2-12.onrender.com/api/register', {
+      const response = await axios.post('https://demo-deployment2-5-zlsf.onrender.com/api/register', {
         username: refUsername.current.value,
         password: refPassword.current.value,
-        role: isAdmin ? refRole.current.value : 'ROLE_USER',
+        role: isAdmin ? refRole.current.value || 'ROLE_USER' : 'ROLE_USER',
       });
 
       if (response.status === 200) {
@@ -37,54 +51,103 @@ const Register = () => {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setError('Something went wrong. Please try again.');
+      setError(error.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="parent">
-      <div className="register-container">
-        <h1>MVPSTAY STORE</h1>
-        <h2>Welcome to MVPSTAY STORE</h2>
-        <p>Create an Account</p>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-        <form onSubmit={createAccount}>
-          <div className="input-group">
-            <label>Username:</label>
-            <input
-              type="text"
-              ref={refUsername}
-              placeholder="Enter your username"
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label>Password:</label>
-            <input
-              type="password"
-              ref={refPassword}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Box
+        sx={{
+          p: 4,
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h4" component="h1" gutterBottom>
+          MVPSTAY STORE
+        </Typography>
+
+        <Typography variant="h6" gutterBottom>
+          Welcome to MVPSTAY STORE
+        </Typography>
+
+        <Typography variant="body1" mb={3}>
+          Create an Account
+        </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {successMessage && (
+          <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
+
+        <Box component="form" onSubmit={createAccount} sx={{ width: '100%' }}>
+          <TextField
+            label="Username"
+            inputRef={refUsername}
+            placeholder="Enter your username"
+            required
+            fullWidth
+            margin="normal"
+            disabled={loading}
+            autoFocus
+          />
+
+          <TextField
+            label="Password"
+            type="password"
+            inputRef={refPassword}
+            placeholder="Enter your password"
+            required
+            fullWidth
+            margin="normal"
+            disabled={loading}
+          />
+
           {isAdmin && (
-            <div className="input-group">
-              <label>Role:</label>
-              <input
-                type="text"
-                ref={refRole}
-                placeholder="ROLE_USER (default)"
-              />
-            </div>
+            <TextField
+              label="Role"
+              inputRef={refRole}
+              placeholder="ROLE_USER (default)"
+              fullWidth
+              margin="normal"
+              disabled={loading}
+            />
           )}
-          <button type="submit">Create Account</button>
-        </form>
-        <p>
-          Forgot password? Recover <a href="#">here</a>.
-        </p>
-      </div>
-    </div>
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Account'}
+          </Button>
+        </Box>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          Forgot password?{' '}
+          <Link href="#" underline="hover">
+            Recover here
+          </Link>
+        </Typography>
+      </Box>
+    </Container>
   );
 };
 

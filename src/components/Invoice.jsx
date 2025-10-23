@@ -1,9 +1,16 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./invoice.css";
 import html2pdf from "html2pdf.js";
+
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Container,
+  CircularProgress,
+} from "@mui/material";
 
 const Invoice = () => {
   const [orderDetails, setOrderDetails] = useState({
@@ -22,11 +29,9 @@ const Invoice = () => {
 
   const clearCartAndNavigate = (isBackToDashboard = false) => {
     axios
-      .delete(`https://demo-deployment2-12.onrender.com/api/cart/clear/${userId}`)
+      .delete(`https://demo-deployment2-5-zlsf.onrender.com/api/cart/clear/${userId}`)
       .then(() => {
-        console.log("Cart cleared successfully.");
         setCartItems([]);
-
         if (isBackToDashboard) {
           navigate("/userdashboard");
         } else {
@@ -46,9 +51,12 @@ const Invoice = () => {
   };
 
   const fetchCartData = async () => {
-    if (!userId) return setLoading(false);
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await axios.get(`https://demo-deployment2-12.onrender.com/api/cart/${userId}`);
+      const response = await axios.get(`https://demo-deployment2-5-zlsf.onrender.com/api/cart/${userId}`);
       setCartItems(response.data.items || []);
     } catch (error) {
       console.error("Error fetching cart data:", error);
@@ -62,7 +70,7 @@ const Invoice = () => {
 
     const fetchOrderDetails = async () => {
       try {
-        const response = await axios.get(`https://demo-deployment2-12.onrender.com/orders/${orderId}`);
+        const response = await axios.get(`https://demo-deployment2-5-zlsf.onrender.com/orders/${orderId}`);
         setOrderDetails(response.data);
       } catch (error) {
         console.error("Error fetching order details:", error);
@@ -103,41 +111,135 @@ const Invoice = () => {
   });
 
   return (
-    <div id="invoice-to-download" className="invoice-container">
-      <h2 className="invoice-title">Invoice</h2>
-      <p className="invoice-id">Order ID: {orderId || "N/A"}</p>
-      <p className="invoice-amount">Total Amount: ₹{orderDetails.amount || 0}</p>
+    <Container
+      maxWidth="md"
+      id="invoice-to-download"
+      sx={{
+        mt: 4,
+        mb: 6,
+        p: 3,
+        border: "1px solid #ccc",
+        borderRadius: 2,
+        backgroundColor: "#fafafa",
+      }}
+    >
+      <Typography variant="h4" align="center" gutterBottom>
+        Invoice
+      </Typography>
 
-      <div className="invoice-items">
-        <h3>Items Purchased</h3>
-        {filteredItems.length > 0 ? (
-          filteredItems.map((item, index) => (
-            <div key={index} className="invoice-item">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="item-image"
-                style={{ width: "100px", height: "auto", marginBottom: "10px" }}
-              />
-              <p>
-                <span className="item-name">{item.name}</span> - {item.qty} x ₹{item.price}
-              </p>
-              <p className="item-description">{item.description}</p>
-            </div>
-          ))
+      <Typography variant="subtitle1" align="center" gutterBottom>
+        Order ID: <strong>{orderId || "N/A"}</strong>
+      </Typography>
+      <Typography variant="h6" align="center" gutterBottom>
+        Total Amount: ₹{orderDetails.amount || 0}
+      </Typography>
+
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Items Purchased
+        </Typography>
+
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : filteredItems.length > 0 ? (
+          <Grid container spacing={3}>
+            {filteredItems.map((item, index) => (
+              <Grid item xs={12} sm={6} key={index}>
+                <Box
+                  sx={{
+                    border: "1px solid #ddd",
+                    borderRadius: 2,
+                    p: 2,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={item.image}
+                    alt={item.name}
+                    sx={{
+                      width: "100%",
+                      maxWidth: 180,
+                      height: "auto",
+                      mb: 2,
+                      borderRadius: 1,
+                      objectFit: "contain",
+                    }}
+                  />
+                  <Typography variant="subtitle1" fontWeight="bold" noWrap>
+                    {item.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mt: 1,
+                      mb: 1,
+                      textAlign: "center",
+                      height: 40,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
+                    {item.description}
+                  </Typography>
+                  <Typography variant="body1">
+                    Qty: {item.qty} &nbsp; x &nbsp; ₹{item.price}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         ) : (
-          <p>No items found in this order.</p>
+          <Typography>No items found in this order.</Typography>
         )}
-      </div>
+      </Box>
 
-      <p className="thank-you-message">Thank you for shopping with us!</p>
-      <button className="back-button" onClick={handleBackToDashboard}>
-        Back to Dashboard
-      </button>
-      <button className="download-button" onClick={handleDownload}>
-        Download Invoice
-      </button>
-    </div>
+      <Typography
+        variant="h6"
+        align="center"
+        sx={{ mt: 6, fontStyle: "italic", color: "text.secondary" }}
+      >
+        Thank you for shopping with us!
+      </Typography>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 3,
+          mt: 4,
+          flexWrap: "wrap",
+        }}
+      >
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleBackToDashboard}
+          sx={{ minWidth: 150 }}
+        >
+          Back to Dashboard
+        </Button>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleDownload}
+          sx={{ minWidth: 150 }}
+        >
+          Download Invoice
+        </Button>
+      </Box>
+    </Container>
   );
 };
 

@@ -1,9 +1,26 @@
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Upload.css";
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Grid,
+    Alert,
+} from "@mui/material";
 
-const uploadWomen = () => {
+const UploadWomen = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [qty, setQty] = useState(0);
@@ -18,11 +35,12 @@ const uploadWomen = () => {
     const fetchCosmetics = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-12.onrender.com/admin/women", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await axios.get(
+                "https://demo-deployment2-5-zlsf.onrender.com/admin/women",
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
             setCosmetics(response.data);
         } catch (error) {
             console.error("Error fetching Women:", error);
@@ -57,12 +75,16 @@ const uploadWomen = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-12.onrender.com/admin/upload/women", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await axios.post(
+                "https://demo-deployment2-5-zlsf.onrender.com/admin/upload/women",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             alert("Women uploaded successfully!");
             setName("");
             setDescription("");
@@ -80,10 +102,8 @@ const uploadWomen = () => {
     const handleDelete = async (id) => {
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-12.onrender.com/admin/delete/women/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            await axios.delete(`https://demo-deployment2-5-zlsf.onrender.com/admin/delete/women/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
             });
             alert("Women deleted successfully!");
             setCosmetics(cosmetics.filter((cosmetic) => cosmetic.id !== id));
@@ -99,8 +119,7 @@ const uploadWomen = () => {
         setDescription(cosmetic.description);
         setQty(cosmetic.qty);
         setPrice(cosmetic.price);
-
-        setFile(null);  // Keep file as null when editing, in case file is not updated
+        setFile(null); // keep file null initially
         setIsEditModalOpen(true);
     };
 
@@ -118,7 +137,7 @@ const uploadWomen = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-12.onrender.com/admin/update/women/${selectedCosmetic.id}`,
+                `https://demo-deployment2-5-zlsf.onrender.com/admin/update/women/${selectedCosmetic.id}`,
                 formData,
                 {
                     headers: {
@@ -149,164 +168,234 @@ const uploadWomen = () => {
         setIsModalOpen(true);
     };
 
-    <button onClick={openModal} className="pop-up-btn">Post</button>
-
-
     return (
-        <div className="upload-cosmetics-container">
-            <button onClick={() => setIsModalOpen(true)} className="pop-up-btn">Post</button>
+        <Box sx={{ padding: 2 }}>
+            <Button variant="contained" onClick={openModal} sx={{ mb: 2 }}>
+                Post
+            </Button>
 
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Upload Women</h2>
-                        <form onSubmit={handleSubmit} className="upload-cosmetics-form">
-                            <div>
-                                <label>Product Name:</label>
-                                <input
-                                    type="text"
+            {/* Upload Modal */}
+            <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Upload Women</DialogTitle>
+                <DialogContent>
+                    <Box component="form" onSubmit={handleSubmit} noValidate>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Product Name"
+                                    fullWidth
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    placeholder="Enter product name"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Description:</label>
-                                <textarea
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Product Description"
+                                    fullWidth
+                                    multiline
+                                    rows={4}
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="Enter product description"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Quantity:</label>
-                                <input
+                            </Grid>
+                            <Grid item xs={6} sm={6}>
+                                <TextField
+                                    label="Product Quantity"
                                     type="number"
+                                    fullWidth
+                                    inputProps={{ min: 0 }}
                                     value={qty}
                                     onChange={(e) => setQty(Math.max(0, parseInt(e.target.value)))}
-                                    placeholder="Enter quantity"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Price:</label>
-                                <input
+                            </Grid>
+                            <Grid item xs={6} sm={6}>
+                                <TextField
+                                    label="Product Price"
                                     type="number"
+                                    fullWidth
+                                    inputProps={{ min: 0, step: 0.01 }}
                                     value={price}
                                     onChange={(e) => setPrice(Math.max(0, parseFloat(e.target.value)))}
-                                    placeholder="Enter price"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Image:</label>
-                                <input
-                                    type="file"
-                                    onChange={(e) => setFile(e.target.files[0])}
-                                    accept="image/*"
-                                />
-                            </div>
-                            <button type="submit">Upload Women</button>
-                            <button type="button" onClick={() => setIsModalOpen(false)}>Close</button>
-                        </form>
-                    </div>
-                </div>
-            )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button variant="outlined" component="label" fullWidth>
+                                    Upload Product Image
+                                    <input
+                                        type="file"
+                                        hidden
+                                        accept="image/*"
+                                        onChange={(e) => setFile(e.target.files[0])}
+                                        required
+                                    />
+                                </Button>
+                                {file && (
+                                    <Typography variant="body2" mt={1}>
+                                        Selected file: {file.name}
+                                    </Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+                        <DialogActions sx={{ mt: 2 }}>
+                            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                            <Button variant="contained" type="submit">
+                                Upload Women
+                            </Button>
+                        </DialogActions>
+                    </Box>
+                </DialogContent>
+            </Dialog>
 
-            {isEditModalOpen && selectedCosmetic && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Edit Women</h2>
-                        <form onSubmit={handleEdit} className="upload-cosmetics-form">
-                            <div>
-                                <label>Product Name:</label>
-                                <input
-                                    type="text"
+            {/* Edit Modal */}
+            <Dialog open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Edit Women</DialogTitle>
+                <DialogContent>
+                    <Box component="form" onSubmit={handleEdit} noValidate>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Product Name"
+                                    fullWidth
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    placeholder="Enter product name"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Description:</label>
-                                <textarea
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Product Description"
+                                    fullWidth
+                                    multiline
+                                    rows={4}
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="Enter product description"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Quantity:</label>
-                                <input
+                            </Grid>
+                            <Grid item xs={6} sm={6}>
+                                <TextField
+                                    label="Product Quantity"
                                     type="number"
+                                    fullWidth
+                                    inputProps={{ min: 0 }}
                                     value={qty}
                                     onChange={(e) => setQty(Math.max(0, parseInt(e.target.value)))}
-                                    placeholder="Enter quantity"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Price:</label>
-                                <input
+                            </Grid>
+                            <Grid item xs={6} sm={6}>
+                                <TextField
+                                    label="Product Price"
                                     type="number"
+                                    fullWidth
+                                    inputProps={{ min: 0, step: 0.01 }}
                                     value={price}
                                     onChange={(e) => setPrice(Math.max(0, parseFloat(e.target.value)))}
-                                    placeholder="Enter price"
+                                    required
                                 />
-                            </div>
-                            <div>
-                                <label>Product Image:</label>
-                                <input
-                                    type="file"
-                                    onChange={(e) => setFile(e.target.files[0])}
-                                    accept="image/*"
-                                />
-                            </div>
-                            <button type="submit">Update Women</button>
-                            <button type="button" onClick={() => setIsEditModalOpen(false)}>Close</button>
-                        </form>
-                    </div>
-                </div>
-            )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button variant="outlined" component="label" fullWidth>
+                                    Upload New Image (optional)
+                                    <input
+                                        type="file"
+                                        hidden
+                                        accept="image/*"
+                                        onChange={(e) => setFile(e.target.files[0])}
+                                    />
+                                </Button>
+                                {file && (
+                                    <Typography variant="body2" mt={1}>
+                                        Selected file: {file.name}
+                                    </Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+                        <DialogActions sx={{ mt: 2 }}>
+                            <Button onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                            <Button variant="contained" type="submit">
+                                Update Women
+                            </Button>
+                        </DialogActions>
+                    </Box>
+                </DialogContent>
+            </Dialog>
 
-            <div className="cosmetic-table">
-                <h3>Uploaded Women</h3>
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Image</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {cosmetics.length === 0 ? (
-                            <tr>
-                                <td colSpan="6">No items available.</td>
-                            </tr>
-                        ) : (
-                            cosmetics.map((item) => (
-                                <tr key={item.id}>
-                                    <td>{item.name}</td>
-                                    <td>{item.description}</td>
-                                    <td>{item.qty}</td>
-                                    <td>{item.price}</td>
-                                    <td>
-                                        <img src={item.image} alt={item.name} width={200} height={200} />
-                                    </td>
-                                    <td>
-                                        <button onClick={() => openEditModal(item)} className="action-btn">Edit</button>
-                                        <button onClick={() => handleDelete(item.id)} className="action-btn">Delete</button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            {/* Table */}
+            <Box mt={4}>
+                <Typography variant="h5" gutterBottom>
+                    Uploaded Women
+                </Typography>
+                {errorMessage && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {errorMessage}
+                    </Alert>
+                )}
+                <TableContainer component={Paper}>
+                    <Table aria-label="uploaded women table" size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Description</TableCell>
+                                <TableCell>Quantity</TableCell>
+                                <TableCell>Price</TableCell>
+                                <TableCell>Image</TableCell>
+                                <TableCell align="center">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {cosmetics.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} align="center">
+                                        No items available.
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                cosmetics.map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.name}</TableCell>
+                                        <TableCell>{item.description}</TableCell>
+                                        <TableCell>{item.qty}</TableCell>
+                                        <TableCell>{item.price}</TableCell>
+                                        <TableCell>
+                                            <Box
+                                                component="img"
+                                                src={item.image}
+                                                alt={item.name}
+                                                sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 1 }}
+                                            />
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                sx={{ mr: 1 }}
+                                                onClick={() => openEditModal(item)}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+        </Box>
     );
 };
 
-export default uploadWomen;
+export default UploadWomen;
