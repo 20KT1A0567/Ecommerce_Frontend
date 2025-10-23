@@ -6,6 +6,116 @@
   max-width: 1400px;
   margin: 50px auto 0px;
 }
+/* Navbar Base */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.logo {
+  cursor: pointer;
+}
+
+/* Hide menu toggle by default */
+.menu-toggle {
+  display: none;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* Navbar items (desktop) */
+.nav-items {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.search-bar {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.filter-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cartlogin {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* ✅ Responsive Styles for Small Screens */
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 15px;
+  }
+
+  /* Show toggle button */
+  .menu-toggle {
+    display: block;
+  }
+
+  /* Hide nav items initially */
+  .nav-items {
+    display: none;
+    flex-direction: column;
+    background: #fff;
+    width: 100%;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    padding: 15px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  }
+
+  /* Show menu when active */
+  .nav-items.active {
+    display: flex;
+  }
+
+  .nav-items input,
+  .filter-btn {
+    width: 90%;
+    margin: 8px auto;
+  }
+
+  .cartlogin {
+    justify-content: center;
+  }
+
+  /* Optional: hide logout image if you want */
+  .cartlogin a:first-child {
+    display: none;
+  }
+}
+
+/* Larger screens - reset menu */
+@media (min-width: 769px) {
+  .nav-items {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+  }
+}
 
 
 .product-image {

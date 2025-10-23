@@ -12,6 +12,7 @@ const Electronics1 = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+
     const getElectronics = async () => {
         try {
             const res = await axios.get("https://demo-deployment2-12.onrender.com/electronics");
@@ -24,11 +25,14 @@ const Electronics1 = () => {
             setLoading(false);
         }
     };
-
+ 
+  const getAuthToken = () => {
+    return localStorage.getItem("token");
+  };
     const handleAddToCart = (event, item) => {
         event.stopPropagation();
 
-        const token = localStorage.getItem("token");
+        const token =getAuthToken();
         if (!token) {
             alert("You need to log in to add items to the cart.");
             navigate("/login");

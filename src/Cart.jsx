@@ -18,7 +18,11 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const { data, setData } = useCartContext();
   const userId = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
+
+  const getAuthToken = () => {
+    return localStorage.getItem("token");
+  };
+  const token = getAuthToken();
   const userName = localStorage.getItem("userName") || "Venkat";
   const userEmail = localStorage.getItem("userEmail") || "venkat@example.com";
   const navigate = useNavigate();
@@ -41,7 +45,7 @@ const Cart = () => {
 
       try {
         console.log("Fetching cart for user:", userId);
-        
+
         const response = await axios.get(
           `https://demo-deployment2-12.onrender.com/api/cart/${userId}`,
           {
@@ -57,7 +61,7 @@ const Cart = () => {
 
         // Handle different response structures
         const cartData = response.data;
-        
+
         if (cartData.items) {
           setData(cartData.items);
         } else if (Array.isArray(cartData)) {
@@ -68,12 +72,12 @@ const Cart = () => {
           console.warn("Unexpected API response structure:", cartData);
           setData([]);
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching cart data:", error);
         console.error("Error response:", error.response);
-        
+
         if (error.response?.status === 401) {
           alert("Please log in again.");
           localStorage.removeItem("userId");
@@ -95,7 +99,7 @@ const Cart = () => {
       await axios.put(
         `https://demo-deployment2-12.onrender.com/api/cart/update/${userId}/${itemId}`,
         null,
-        { 
+        {
           params: { qty: newQty },
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -103,9 +107,9 @@ const Cart = () => {
           }
         }
       );
-      
-      setData((prev) => 
-        prev.map(item => 
+
+      setData((prev) =>
+        prev.map(item =>
           item.id === itemId ? { ...item, qty: newQty } : item
         )
       );
@@ -127,7 +131,7 @@ const Cart = () => {
           }
         }
       );
-      
+
       setData((prev) => prev.filter((item) => item.id !== itemId));
     } catch (error) {
       console.error("Error removing item:", error);
@@ -138,21 +142,21 @@ const Cart = () => {
   // Calculate total
   const calculateTotal = () => {
     if (!data || data.length === 0) return 0;
-    
+
     return data.reduce((total, item) => {
-      const product = 
+      const product =
         item.menClothing || item.womenClothing || item.kidsClothing ||
         item.grocery || item.cosmetics || item.footwear || item.electronics ||
         item.laptops || item.mobiles || item.toys || item;
-      
+
       const price = product?.price || item.price || 0;
       const quantity = item.qty || item.quantity || 1;
-      
+
       return total + (price * quantity);
     }, 0);
   };
 
-  // Handle payment
+
   const handlePayment = async () => {
     if (!data || data.length === 0) {
       alert("Your cart is empty!");
@@ -254,7 +258,7 @@ const Cart = () => {
   return (
     <div className="cart-container">
       <h2 className="cart-title">Shopping Cart</h2>
-      
+
       {/* Debug info - remove in production */}
       <DebugInfo />
 
@@ -267,8 +271,8 @@ const Cart = () => {
           <div className="cart-items">
             {data.map((item, index) => {
               console.log(`Rendering item ${index}:`, item);
-              
-              const product = 
+
+              const product =
                 item.menClothing || item.womenClothing || item.kidsClothing ||
                 item.grocery || item.cosmetics || item.footwear || item.electronics ||
                 item.laptops || item.mobiles || item.toys || item;
