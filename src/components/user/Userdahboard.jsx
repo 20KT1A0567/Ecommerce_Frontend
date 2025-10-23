@@ -132,7 +132,7 @@ const UserDashboard = () => {
               placeholder="Search products"
               className="search-bar"
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={handleSearch}
               onKeyUp={(e) => {
                 if (e.key === "Backspace" && searchQuery === "") {
                   setSearchResults([]);
