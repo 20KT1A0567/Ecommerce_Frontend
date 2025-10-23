@@ -44,7 +44,7 @@ const UploadGroceries = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/admin/grocery", {
+            const response = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/admin/grocery", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -95,7 +95,7 @@ const UploadGroceries = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-7-bbpl.onrender.com/admin/upload/grocery", formData, {
+            await axios.post("https://demo-deployment2-8-cq0p.onrender.com/admin/upload/grocery", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -118,7 +118,7 @@ const UploadGroceries = () => {
 
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-7-bbpl.onrender.com/admin/delete/grocery/${id}`, {
+            await axios.delete(`https://demo-deployment2-8-cq0p.onrender.com/admin/delete/grocery/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -166,7 +166,7 @@ const UploadGroceries = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/grocery/${selectedGrocery.id}`,
+                `https://demo-deployment2-8-cq0p.onrender.com/admin/update/grocery/${selectedGrocery.id}`,
                 formData,
                 {
                     headers: {

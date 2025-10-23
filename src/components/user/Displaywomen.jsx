@@ -54,7 +54,7 @@ const Displaywomen = () => {
 
     try {
       await axios.post(
-        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/add/${userId}/women/${item.id}`,
+        `https://demo-deployment2-8-cq0p.onrender.com/api/cart/add/${userId}/women/${item.id}`,
         null,
         {
           params: { qty: quantity },

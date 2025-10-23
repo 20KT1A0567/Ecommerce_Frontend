@@ -35,7 +35,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://demo-deployment2-7-bbpl.onrender.com/api/register', {
+      const response = await axios.post('https://demo-deployment2-8-cq0p.onrender.com/api/register', {
         username: refUsername.current.value,
         password: refPassword.current.value,
         role: isAdmin ? refRole.current.value || 'ROLE_USER' : 'ROLE_USER',

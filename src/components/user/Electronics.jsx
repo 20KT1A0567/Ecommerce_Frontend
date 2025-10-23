@@ -44,7 +44,7 @@ const Electronics = () => {
     const getElectronics = async () => {
         try {
             const res = await axios.get(
-                "https://demo-deployment2-7-bbpl.onrender.com/user/electronics",
+                "https://demo-deployment2-8-cq0p.onrender.com/user/electronics",
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,

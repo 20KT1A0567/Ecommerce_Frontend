@@ -45,7 +45,7 @@ const UploadCosmetics = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/admin/cosmetics", {
+            const response = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/admin/cosmetics", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -94,7 +94,7 @@ const UploadCosmetics = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-7-bbpl.onrender.com/admin/upload/cosmetics", formData, {
+            await axios.post("https://demo-deployment2-8-cq0p.onrender.com/admin/upload/cosmetics", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ const UploadCosmetics = () => {
 
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-7-bbpl.onrender.com/admin/delete/cosmetics/${id}`, {
+            await axios.delete(`https://demo-deployment2-8-cq0p.onrender.com/admin/delete/cosmetics/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -164,7 +164,7 @@ const UploadCosmetics = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/cosmetics/${selectedCosmetic.id}`,
+                `https://demo-deployment2-8-cq0p.onrender.com/admin/update/cosmetics/${selectedCosmetic.id}`,
                 formData,
                 {
                     headers: {

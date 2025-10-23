@@ -28,7 +28,7 @@ const Women1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/women");
+            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/women");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -50,7 +50,7 @@ const Women1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-7-bbpl.onrender.com/women", item, {
+        axios.post("https://demo-deployment2-8-cq0p.onrender.com/women", item, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(() => {

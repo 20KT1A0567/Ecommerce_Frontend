@@ -45,7 +45,7 @@ const UploadMobiles = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://demo-deployment2-7-bbpl.onrender.com/admin/mobiles",
+                "https://demo-deployment2-8-cq0p.onrender.com/admin/mobiles",
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setMobiles(response.data);
@@ -95,7 +95,7 @@ const UploadMobiles = () => {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
-                "https://demo-deployment2-7-bbpl.onrender.com/admin/upload/mobiles",
+                "https://demo-deployment2-8-cq0p.onrender.com/admin/upload/mobiles",
                 formData,
                 {
                     headers: {
@@ -122,7 +122,7 @@ const UploadMobiles = () => {
         try {
             const token = localStorage.getItem("token");
             await axios.delete(
-                `https://demo-deployment2-7-bbpl.onrender.com/admin/delete/mobiles/${id}`,
+                `https://demo-deployment2-8-cq0p.onrender.com/admin/delete/mobiles/${id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             alert("Mobiles deleted successfully!");
@@ -168,7 +168,7 @@ const UploadMobiles = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.put(
-                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/mobiles/${selectedMobile.id}`,
+                `https://demo-deployment2-8-cq0p.onrender.com/admin/update/mobiles/${selectedMobile.id}`,
                 formData,
                 {
                     headers: {

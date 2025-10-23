@@ -27,6 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
+const API_BASE_URL = "https://demo-deployment2-8-cq0p.onrender.com";
+
 // Load Razorpay script
 const loadRazorpay = () => {
   return new Promise((resolve, reject) => {
@@ -48,17 +50,9 @@ const Cart = () => {
   const [alert, setAlert] = useState({ open: false, message: "", severity: "info" });
   const [errorDialog, setErrorDialog] = useState({ open: false, message: "", showDemoOption: false });
   const { data, setData } = useCartContext();
+
   const userId = localStorage.getItem("userId");
-
-  const getAuthToken = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-    return token;
-  };
-
-  const token = getAuthToken();
+  const token = localStorage.getItem("token");
   const userName = localStorage.getItem("userName") || "Customer";
   const userEmail = localStorage.getItem("userEmail") || "customer@example.com";
   const navigate = useNavigate();
@@ -71,7 +65,7 @@ const Cart = () => {
     setErrorDialog({ open: true, message, showDemoOption });
   };
 
-  // Check authentication and redirect if needed
+  // Check authentication
   useEffect(() => {
     if (!userId || !token) {
       showAlert("Please login to access your cart", "warning");
@@ -80,25 +74,47 @@ const Cart = () => {
     }
   }, [userId, token, navigate]);
 
+  // Enhanced API call function with better error handling
+  const apiCall = async (url, options = {}) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 15000,
+      ...options
+    };
+
+    try {
+      const response = await axios(url, config);
+      return response.data;
+    } catch (error) {
+      console.error("API Error:", error);
+
+      if (error.response?.status === 401) {
+        showAlert("Session expired. Please login again.", "error");
+        localStorage.clear();
+        navigate("/login");
+        throw new Error("Authentication failed");
+      }
+
+      if (error.code === 'NETWORK_ERROR' || !error.response) {
+        throw new Error("Network error: Please check your internet connection");
+      }
+
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const fetchCart = async () => {
       if (!userId || !token) {
         setLoading(false);
         return;
       }
-      try {
-        const response = await axios.get(
-          `https://demo-deployment2-7-bbpl.onrender.com/api/cart/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            timeout: 10000,
-          }
-        );
 
-        const cartData = response.data;
+      try {
+        const cartData = await apiCall(`${API_BASE_URL}/api/cart/${userId}`);
         let cartItems = [];
 
         if (cartData.items) cartItems = cartData.items;
@@ -109,16 +125,7 @@ const Cart = () => {
         setLoading(false);
       } catch (error) {
         console.error("Cart fetch error:", error);
-        if (error.response?.status === 401) {
-          showAlert("Session expired. Please login again.", "error");
-          localStorage.removeItem("userId");
-          localStorage.removeItem("token");
-          localStorage.removeItem("userName");
-          localStorage.removeItem("userEmail");
-          navigate("/login");
-        } else {
-          showAlert("Failed to load cart. Please try again.", "error");
-        }
+        showAlert("Failed to load cart. Please try again.", "error");
         setLoading(false);
       }
     };
@@ -130,16 +137,9 @@ const Cart = () => {
     if (newQty < 1) return;
 
     try {
-      await axios.put(
-        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/update/${userId}/${itemId}`,
-        null,
-        {
-          params: { qty: newQty },
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+      await apiCall(
+        `${API_BASE_URL}/api/cart/update/${userId}/${itemId}?qty=${newQty}`,
+        { method: 'PUT' }
       );
 
       setData((prev) =>
@@ -154,14 +154,9 @@ const Cart = () => {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await axios.delete(
-        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/delete/${userId}/${itemId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+      await apiCall(
+        `${API_BASE_URL}/api/cart/delete/${userId}/${itemId}`,
+        { method: 'DELETE' }
       );
 
       setData((prev) => prev.filter((item) => item.id !== itemId));
@@ -175,29 +170,22 @@ const Cart = () => {
     if (!data || data.length === 0) return 0;
 
     return data.reduce((total, item) => {
-      const product =
-        item.menClothing ||
-        item.womenClothing ||
-        item.kidsClothing ||
-        item.grocery ||
-        item.cosmetics ||
-        item.footwear ||
-        item.electronics ||
-        item.laptops ||
-        item.mobiles ||
-        item.toys ||
-        item;
-
+      const product = getProductFromItem(item);
       const price = product?.price || item.price || 0;
       const quantity = item.qty || item.quantity || 1;
-
       return total + price * quantity;
     }, 0);
   };
 
   const calculateItemTotal = (item) => {
-    const product =
-      item.menClothing ||
+    const product = getProductFromItem(item);
+    const price = product?.price || item.price || 0;
+    const quantity = item.qty || item.quantity || 1;
+    return price * quantity;
+  };
+
+  const getProductFromItem = (item) => {
+    return item.menClothing ||
       item.womenClothing ||
       item.kidsClothing ||
       item.grocery ||
@@ -208,10 +196,6 @@ const Cart = () => {
       item.mobiles ||
       item.toys ||
       item;
-
-    const price = product?.price || item.price || 0;
-    const quantity = item.qty || item.quantity || 1;
-    return price * quantity;
   };
 
   const createDemoOrder = () => {
@@ -223,7 +207,7 @@ const Cart = () => {
 
     navigate("/invoice", {
       state: {
-        cartItems: [...data], // Create a copy of the data
+        cartItems: [...data],
         orderId: orderId,
         total: calculateTotal(),
         paymentStatus: "DEMO_SUCCESS",
@@ -245,32 +229,24 @@ const Cart = () => {
     }
 
     setProcessing(true);
+
     try {
       await loadRazorpay();
 
       // Create order using your backend API
-      const orderResponse = await axios.post(
-        "https://demo-deployment2-7-bbpl.onrender.com/api/payment/createOrder",
-        {
+      const orderData = await apiCall(`${API_BASE_URL}/api/payment/createOrder`, {
+        method: 'POST',
+        data: {
           userId: parseInt(userId),
           amount: calculateTotal(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          timeout: 15000,
         }
-      );
-
-      const orderData = orderResponse.data;
+      });
 
       console.log("Order response:", orderData);
 
-      // Handle real Razorpay payment
+      // Handle Razorpay payment
       const options = {
-        key: "rzp_test_fNhXlhgX3Ai8dA",
+        key: "rzp_test_fNhXlhgX3Ai8dA", // Your test key
         amount: orderData.amount,
         currency: orderData.currency || "INR",
         name: "Ecommerce Store",
@@ -279,22 +255,16 @@ const Cart = () => {
         handler: async (response) => {
           try {
             // Verify payment with your backend
-            const verifyResponse = await axios.post(
-              "https://demo-deployment2-7-bbpl.onrender.com/api/payment/verifyPayment",
-              {
+            const verifyResponse = await apiCall(`${API_BASE_URL}/api/payment/verifyPayment`, {
+              method: 'POST',
+              data: {
                 orderId: response.razorpay_order_id,
                 paymentId: response.razorpay_payment_id,
                 signature: response.razorpay_signature,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
               }
-            );
+            });
 
-            if (verifyResponse.data.status === "Payment Verified") {
+            if (verifyResponse.status === "success") {
               showAlert("Payment successful! Your order has been placed.", "success");
               // Clear cart after successful payment
               setData([]);
@@ -313,7 +283,7 @@ const Cart = () => {
             }
           } catch (error) {
             console.error("Payment verification error:", error);
-            showAlert("Payment verification failed. Please contact support.", "error");
+            showAlert("Payment completed but verification failed. Please contact support.", "warning");
           }
         },
         prefill: {
@@ -338,23 +308,19 @@ const Cart = () => {
     } catch (error) {
       console.error("Payment error details:", error);
 
-      if (error.code === 'NETWORK_ERROR' || !error.response) {
+      if (error.message.includes("Network error")) {
         showErrorDialog(
           "Network error: Please check your internet connection and try again.",
           true
         );
       } else if (error.response?.status === 500) {
         showErrorDialog(
-          "Payment service is currently unavailable. The server encountered an error while processing your payment.",
+          "Payment service is currently unavailable. Please try again later or use demo mode.",
           true
         );
-      } else if (error.response?.status === 401) {
-        showAlert("Session expired. Please login again.", "error");
-        localStorage.clear();
-        navigate("/login");
       } else {
         showErrorDialog(
-          `Payment failed: ${error.response?.data?.message || error.message}`,
+          `Payment failed: ${error.response?.data?.error || error.message}`,
           true
         );
       }
@@ -412,19 +378,7 @@ const Cart = () => {
         {/* Cart Items */}
         <Grid item xs={12} md={8}>
           {data.map((item, index) => {
-            const product =
-              item.menClothing ||
-              item.womenClothing ||
-              item.kidsClothing ||
-              item.grocery ||
-              item.cosmetics ||
-              item.footwear ||
-              item.electronics ||
-              item.laptops ||
-              item.mobiles ||
-              item.toys ||
-              item;
-
+            const product = getProductFromItem(item);
             const itemTotal = calculateItemTotal(item);
 
             return (

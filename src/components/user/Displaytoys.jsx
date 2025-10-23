@@ -54,7 +54,7 @@ const Displaytoys = () => {
 
     try {
       await axios.post(
-        `https://demo-deployment2-7-bbpl.onrender.com/api/cart/add/${userId}/toys/${item.id}`,
+        `https://demo-deployment2-8-cq0p.onrender.com/api/cart/add/${userId}/toys/${item.id}`,
         null,
         {
           params: { qty: quantity },

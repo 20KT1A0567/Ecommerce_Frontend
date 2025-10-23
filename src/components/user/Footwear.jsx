@@ -39,7 +39,7 @@ const Footwear = () => {
 
     const getFootwear = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/user/footwear", {
+            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/footwear", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -93,7 +93,7 @@ const Footwear = () => {
         // Call backend API to add item to cart (adjust as needed)
         axios
             .post(
-                `https://demo-deployment2-7-bbpl.onrender.com/cart`,
+                `https://demo-deployment2-8-cq0p.onrender.com/cart`,
                 item,
                 { headers: { Authorization: `Bearer ${token}` } }
             )

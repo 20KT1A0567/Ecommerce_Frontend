@@ -37,7 +37,7 @@ const Cosmetics1 = () => {
 
     const getCosmetics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/cosmetics");
+            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/cosmetics");
             setCosmetics(res.data);
             setError(null);
         } catch (error) {
@@ -64,7 +64,7 @@ const Cosmetics1 = () => {
         }
 
         axios
-            .post("https://demo-deployment2-7-bbpl.onrender.com/cosmetics", item, {
+            .post("https://demo-deployment2-8-cq0p.onrender.com/cosmetics", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => alert("Item added to cart successfully!"))

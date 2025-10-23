@@ -36,7 +36,7 @@ const Laptops = () => {
 
     const getLaptops = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/user/laptops", {
+            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/laptops", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

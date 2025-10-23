@@ -39,7 +39,7 @@ const Kids = () => {
 
     const getKidsProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/user/kids", {
+            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/kids", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

@@ -44,7 +44,7 @@ const UploadLaptop = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-7-bbpl.onrender.com/admin/laptops", {
+            const response = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/admin/laptops", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setLaptops(response.data);
@@ -92,7 +92,7 @@ const UploadLaptop = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.post("https://demo-deployment2-7-bbpl.onrender.com/admin/upload/laptops", formData, {
+            await axios.post("https://demo-deployment2-8-cq0p.onrender.com/admin/upload/laptops", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ const UploadLaptop = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`https://demo-deployment2-7-bbpl.onrender.com/admin/delete/laptops/${id}`, {
+            await axios.delete(`https://demo-deployment2-8-cq0p.onrender.com/admin/delete/laptops/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert("Laptop deleted successfully!");
@@ -160,7 +160,7 @@ const UploadLaptop = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.put(
-                `https://demo-deployment2-7-bbpl.onrender.com/admin/update/laptops/${selectedLaptop.id}`,
+                `https://demo-deployment2-8-cq0p.onrender.com/admin/update/laptops/${selectedLaptop.id}`,
                 formData,
                 {
                     headers: {
