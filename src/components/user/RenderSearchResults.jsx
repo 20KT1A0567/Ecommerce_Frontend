@@ -26,32 +26,42 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
     }
   };
 
-
   const handleNavigate = (product) => {
-    const category = product.category.toLowerCase();
-    
-    if (category === "laptops") {
-      navigate("/laptopsdetails", { state: { item: product } });
-    } else if(category === "grocery"){
-      navigate(`/grocerydetails`, { state: { item: product } });
-    }else if(category === "cosmetics"){
-      navigate(`/cosmeticsdetails`, { state: { item: product } });
-    }else if(category === "electronics"){
-      navigate(`/electronicsdetails`, { state: { item: product } });
-    }else if(category === "kids"){
-      navigate(`/kidsdetails`, { state: { item: product } });
-    }else if(category === "men"){
-      navigate(`/mendetails`, { state: { item: product } });
-    }else if(category === "toys"){
-      navigate(`/toysdetails`, { state: { item: product } });
-    }else if(category === "women"){
-      navigate(`/womendetails`, { state: { item: product } });
-    }else if(category === "footwear"){
-      navigate(`/footweardetails`, { state: { item: product } });
-    }else if(category === "mobiles"){
-      navigate(`/mobiledetails`, { state: { item: product } });
-    }else{
-      navigate('/error')
+    const category = product.category?.toLowerCase();
+
+    switch (category) {
+      case "laptops":
+        navigate("/laptopsdetails", { state: { item: product } });
+        break;
+      case "grocery":
+        navigate("/grocerydetails", { state: { item: product } });
+        break;
+      case "cosmetics":
+        navigate("/cosmeticsdetails", { state: { item: product } });
+        break;
+      case "electronics":
+        navigate("/electronicsdetails", { state: { item: product } });
+        break;
+      case "kids":
+        navigate("/kidsdetails", { state: { item: product } });
+        break;
+      case "men":
+        navigate("/mendetails", { state: { item: product } });
+        break;
+      case "toys":
+        navigate("/toysdetails", { state: { item: product } });
+        break;
+      case "women":
+        navigate("/womendetails", { state: { item: product } });
+        break;
+      case "footwear":
+        navigate("/footweardetails", { state: { item: product } });
+        break;
+      case "mobiles":
+        navigate("/mobiledetails", { state: { item: product } });
+        break;
+      default:
+        navigate("/error");
     }
   };
 
@@ -59,7 +69,7 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
     return <p className="loading">Loading...</p>;
   }
 
-  if (!searchResults.length) {
+  if (!searchResults || searchResults.length === 0) {
     return <p className="no-results">No products found for "{searchQuery}"</p>;
   }
 
@@ -73,14 +83,22 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
           />
           <strong>{product.name}</strong>
           <p className="price">₹{product.price}</p>
-          <button
-            className="add-to-cart-button"
 
-            onClick={(e) => handleNavigate(e, product)}
-          >
-            Add to Cart
+          <div className="button-container">
+            <button
+              className="view-details-button"
+              onClick={() => handleNavigate(product)}
+            >
+              View Details
+            </button>
 
-          </button>
+            <button
+              className="add-to-cart-button"
+              onClick={() => handleAddToCart(product)}
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       ))}
     </div>
