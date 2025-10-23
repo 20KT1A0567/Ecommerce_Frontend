@@ -189,7 +189,7 @@ const Electronics = () => {
     const [cart, setCart] = useState([]);
     const [sortOption, setSortOption] = useState("");
     const [showSortOptions, setShowSortOptions] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false); // ✅ new state
+    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     const getElectronics = async () => {
@@ -265,23 +265,25 @@ const Electronics = () => {
             <div className="shopping-app">
                 <div className="app-header">
                     <div className="header-left">
-                        <img src={logo} width={150} height={80} alt="Logo" className="logo" />
+                        <img src={logo} alt="Logo" className="logo" />
                     </div>
 
-                    {/* ✅ Hamburger Menu Toggle Button */}
+                    {/* Hamburger Menu Toggle Button */}
                     <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
                         ☰
                     </div>
 
-                    {/* ✅ Navbar Items (toggle visible on small screens) */}
+                    {/* Navbar Items */}
                     <div className={`nav-items ${menuOpen ? "active" : ""}`}>
-                        <input
-                            type="search"
-                            placeholder="Search products"
-                            className="search-bar"
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                        />
+                        <div className="search-container">
+                            <input
+                                type="search"
+                                placeholder="Search products"
+                                className="search-bar"
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
+                        </div>
 
                         <div className="filter-container">
                             <button
@@ -307,23 +309,17 @@ const Electronics = () => {
                             )}
                         </div>
 
-                        <div className="cartlogin">
-                            <Link to="/" onClick={handleLogoClick}>
-                                <img
-                                    src="https://www.shutterstock.com/image-vector/logout-button-260nw-312305171.jpg"
-                                    width={40}
-                                    height={40}
-                                    className="login"
-                                    alt="Logout"
-                                />
-                            </Link>
-                            <Link to="/cart">
+                        <div className="header-actions">
+                            <Link to="/cart" className="cart-icon">
                                 <img
                                     src="https://static.vecteezy.com/system/resources/previews/004/798/846/original/shopping-cart-logo-or-icon-design-vector.jpg"
-                                    width={60}
-                                    height={60}
-                                    className="login"
                                     alt="Cart"
+                                />
+                            </Link>
+                            <Link to="/" onClick={handleLogoClick} className="logout-icon">
+                                <img
+                                    src="https://www.shutterstock.com/image-vector/logout-button-260nw-312305171.jpg"
+                                    alt="Logout"
                                 />
                             </Link>
                         </div>
@@ -331,7 +327,7 @@ const Electronics = () => {
                 </div>
             </div>
 
-            {/* ✅ Product Listing */}
+            {/* Product Listing */}
             <div className="product-container">
                 {loading ? (
                     <div className="loading-message">Loading electronics...</div>
