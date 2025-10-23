@@ -23,39 +23,30 @@ const UserDashboard = () => {
     navigate("/");
   };
 
-  const handleSearchChange = async (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
 
-    if (query.trim().length > 0) {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `https://demo-deployment2-12.onrender.com/user/search?keyword=${query}`
-        );
+    setLoading(true);
+    try {
+      // ✅ Replace with your backend search API URL
+      const response = await axios.get(
+        `https://your-backend-api.com/api/products/search?query=${searchQuery}`
+      );
 
-        const results = [];
+      console.log("Search Response:", response.data);
 
-        // ✅ Only one loop — clean and accurate
-        response.data.forEach((entry) => {
-          entry.products.forEach((product) => {
-            if (
-              product.name.toLowerCase().includes(query.toLowerCase()) ||
-              product.description.toLowerCase().includes(query.toLowerCase())
-            ) {
-              results.push({ ...product, category: entry.category });
-            }
-          });
-        });
+      // ✅ Ensure data is always an array
+      const results = Array.isArray(response.data)
+        ? response.data
+        : response.data.results || [];
 
-        setSearchResults(results);
-      } catch (error) {
-        console.error("Error fetching search results:", error);
-      } finally {
-        setLoading(false);
-      }
-    } else {
+      setSearchResults(results);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
       setSearchResults([]);
+    } finally {
+      setLoading(false);
     }
   };
 

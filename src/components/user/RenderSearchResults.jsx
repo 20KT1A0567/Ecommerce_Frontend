@@ -1,7 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCart }) => {
+const RenderSearchResults = ({
+  searchQuery,
+  searchResults,
+  loading,
+  cart,
+  setCart,
+}) => {
   const navigate = useNavigate();
 
   const handleAddToCart = (item) => {
@@ -27,7 +33,7 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
   };
 
   const handleNavigate = (product) => {
-    const category = product.category?.toLowerCase();
+    const category = product.category?.toLowerCase() || "";
 
     switch (category) {
       case "laptops":
@@ -62,6 +68,7 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
         break;
       default:
         navigate("/error");
+        break;
     }
   };
 
@@ -69,7 +76,7 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
     return <p className="loading">Loading...</p>;
   }
 
-  if (!searchResults || searchResults.length === 0) {
+  if (!searchResults.length && searchQuery) {
     return <p className="no-results">No products found for "{searchQuery}"</p>;
   }
 
@@ -80,23 +87,23 @@ const RenderSearchResults = ({ searchQuery, searchResults, loading, cart, setCar
           <img
             src={product.image || "https://via.placeholder.com/200"}
             alt={product.name || "Product"}
+            className="product-image"
+            onClick={() => handleNavigate(product)}
           />
-          <strong>{product.name}</strong>
-          <p className="price">₹{product.price}</p>
-
-          <div className="button-container">
-            <button
-              className="view-details-button"
-              onClick={() => handleNavigate(product)}
-            >
-              View Details
-            </button>
-
+          <strong className="product-name">{product.name}</strong>
+          <p className="product-price">₹{product.price}</p>
+          <div className="button-group">
             <button
               className="add-to-cart-button"
               onClick={() => handleAddToCart(product)}
             >
               Add to Cart
+            </button>
+            <button
+              className="details-button"
+              onClick={() => handleNavigate(product)}
+            >
+              View Details
             </button>
           </div>
         </div>
