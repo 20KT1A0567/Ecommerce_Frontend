@@ -64,7 +64,7 @@ const Displaykidswear = () => {
 
         try {
             await axios.post(
-                `https://demo-deployment2-8-cq0p.onrender.com/api/cart/add/${userId}/kids/${item.id}`,
+                `https://demo-deployment2-15-syk7.onrender.com/api/cart/add/${userId}/kids/${item.id}`,
                 null,
                 {
                     params: { qty: quantity },

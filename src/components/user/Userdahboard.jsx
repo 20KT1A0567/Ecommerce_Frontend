@@ -97,7 +97,7 @@ const UserDashboard = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://demo-deployment2-8-cq0p.onrender.com/api/products/search?query=${searchQuery}`
+        `https://demo-deployment2-15-syk7.onrender.com/items/search?query=${searchQuery}`
       );
 
       const results = Array.isArray(response.data)
@@ -166,7 +166,6 @@ const UserDashboard = () => {
 
   return (
     <>
-      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -199,24 +198,14 @@ const UserDashboard = () => {
           noValidate
           autoComplete="off"
         >
-          <TextField
-            fullWidth
-            size="small"
-            variant="outlined"
-            placeholder="Search products"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Button type="submit" variant="contained" sx={{ ml: 1 }}>
-            Search
-          </Button>
+        
         </Box>
 
         {/* User info and actions */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <AccountCircleIcon sx={{ fontSize: 40 }} color="primary" />
           <Typography variant="subtitle1" noWrap sx={{ maxWidth: 100 }}>
-            {localStorage.getItem("userName") || "Guest"}
+            {localStorage.getItem("username") || "Guest"}
           </Typography>
 
           <IconButton onClick={handleLogout} color="primary" aria-label="Logout">

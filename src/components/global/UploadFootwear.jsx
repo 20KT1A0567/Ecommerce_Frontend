@@ -44,7 +44,7 @@ const UploadFootwear = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/admin/footwear", {
+            const response = await axios.get("https://demo-deployment2-15-syk7.onrender.com/admin/footwear", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -95,7 +95,7 @@ const UploadFootwear = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-8-cq0p.onrender.com/admin/upload/footwear", formData, {
+            await axios.post("https://demo-deployment2-15-syk7.onrender.com/admin/upload/footwear", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -118,7 +118,7 @@ const UploadFootwear = () => {
 
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-8-cq0p.onrender.com/admin/delete/footwear/${id}`, {
+            await axios.delete(`https://demo-deployment2-15-syk7.onrender.com/admin/delete/footwear/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -166,7 +166,7 @@ const UploadFootwear = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-8-cq0p.onrender.com/admin/update/footwear/${selectedFootwear.id}`,
+                `https://demo-deployment2-15-syk7.onrender.com/admin/update/footwear/${selectedFootwear.id}`,
                 formData,
                 {
                     headers: {

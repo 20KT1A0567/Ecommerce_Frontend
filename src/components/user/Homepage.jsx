@@ -136,11 +136,6 @@ const Homepage = () => {
             </Typography>
           </Box>
 
-          <TextField
-            size="small"
-            placeholder="Search products"
-            sx={{ bgcolor: "white", borderRadius: 1, flexGrow: 1, maxWidth: 400 }}
-          />
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Link to="/login" style={{ display: "flex", alignItems: "center" }}>

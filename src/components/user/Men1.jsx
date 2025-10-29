@@ -28,7 +28,7 @@ const Men1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/men");
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/men");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -56,7 +56,7 @@ const Men1 = () => {
         }
 
         axios
-            .post("https://demo-deployment2-8-cq0p.onrender.com/men", item, {
+            .post("https://demo-deployment2-15-syk7.onrender.com/men", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {
@@ -91,14 +91,7 @@ const Men1 = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ bgcolor: "white", borderRadius: 1, width: { xs: "100%", sm: 300 } }}
-                    />
+                   
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <IconButton component={Link} to="/login" sx={{ color: "white" }} aria-label="login">

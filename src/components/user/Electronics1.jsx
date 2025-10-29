@@ -32,7 +32,7 @@ const Electronics1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/electronics");
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/electronics");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -59,7 +59,7 @@ const Electronics1 = () => {
             return;
         }
         axios
-            .post("https://demo-deployment2-8-cq0p.onrender.com/cart", item, {
+            .post("https://demo-deployment2-15-syk7.onrender.com/cart", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {
@@ -108,18 +108,7 @@ const Electronics1 = () => {
                             mt: { xs: 1, sm: 0 },
                         }}
                     >
-                        <TextField
-                            size="small"
-                            fullWidth
-                            placeholder="Search products"
-                            variant="outlined"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            InputProps={{
-                                endAdornment: <SearchIcon color="action" />,
-                                sx: { bgcolor: "white", borderRadius: 1 },
-                            }}
-                        />
+                       
                     </Box>
 
                     <Box sx={{ display: "flex", gap: 1, mt: { xs: 1, sm: 0 } }}>

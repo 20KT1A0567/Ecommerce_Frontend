@@ -27,9 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const API_BASE_URL = "https://demo-deployment2-8-cq0p.onrender.com";
+const API_BASE_URL = "https://demo-deployment2-15-syk7.onrender.com";
 
-// Load Razorpay script
 const loadRazorpay = () => {
   return new Promise((resolve, reject) => {
     if (window.Razorpay) {

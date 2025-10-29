@@ -35,7 +35,7 @@ const Women = () => {
 
     const getWomenProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/women", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/women", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -134,15 +134,7 @@ const Women = () => {
                         />
                     </Box>
 
-                    {/* Search Field */}
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        sx={{ flexGrow: 1, maxWidth: 400, minWidth: 200 }}
-                    />
+                  
 
                     {/* Sort / Filter Select */}
                     <FormControl size="small" sx={{ minWidth: 180 }}>
@@ -250,14 +242,7 @@ const Women = () => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button
-                                            size="small"
-                                            variant="contained"
-                                            fullWidth
-                                            onClick={(e) => handleAddToCart(item, e)}
-                                        >
-                                            Add to Cart
-                                        </Button>
+                                        
                                     </CardActions>
                                 </Card>
                             </Grid>

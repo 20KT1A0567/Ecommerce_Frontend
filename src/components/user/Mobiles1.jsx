@@ -28,7 +28,7 @@ const Mobiles1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/mobiles");
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/mobiles");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -54,7 +54,7 @@ const Mobiles1 = () => {
             return;
         }
         axios
-            .post("https://demo-deployment2-8-cq0p.onrender.com/mobiles", item, {
+            .post("https://demo-deployment2-15-syk7.onrender.com/mobiles", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {
@@ -88,14 +88,7 @@ const Mobiles1 = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ bgcolor: "white", borderRadius: 1, width: { xs: "100%", sm: 300 } }}
-                    />
+                    
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <Link to="/login">

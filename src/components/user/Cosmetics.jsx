@@ -43,7 +43,7 @@ const Cosmetics = () => {
     const getCosmetics = async () => {
         try {
             const res = await axios.get(
-                "https://demo-deployment2-8-cq0p.onrender.com/user/cosmetics",
+                "https://demo-deployment2-15-syk7.onrender.com/user/cosmetics",
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -294,15 +294,7 @@ const Cosmetics = () => {
                             <div className="name">{item.name}</div>
                             <div className="description">{item.description}</div>
                             <div className="price">Price: ₹{item.price}</div>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddToCart(item);
-                                }}
-                                className="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
+                            {/*  */}
                         </div>
                     ))
                 ) : (

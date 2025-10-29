@@ -30,7 +30,7 @@ const Kids1 = () => {
 
     const getKids = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/kids");
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/kids");
             setKids(res.data);
             setError(null);
         } catch (error) {
@@ -52,7 +52,7 @@ const Kids1 = () => {
             return;
         }
         axios
-            .post("https://demo-deployment2-8-cq0p.onrender.com/kids", item, {
+            .post("https://demo-deployment2-15-syk7.onrender.com/kids", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {
@@ -85,21 +85,7 @@ const Kids1 = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ bgcolor: "white", borderRadius: 1, width: { xs: "100%", sm: 300 } }}
-                        InputProps={{
-                            startAdornment: (
-                                <Box sx={{ pl: 1, color: "gray" }}>
-                                    🔍
-                                </Box>
-                            ),
-                        }}
-                    />
+                    
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <IconButton component={Link} to="/login" color="inherit" aria-label="login" size="large">

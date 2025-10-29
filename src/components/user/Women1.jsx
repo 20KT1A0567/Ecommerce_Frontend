@@ -28,7 +28,7 @@ const Women1 = () => {
 
     const getElectronics = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/women");
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/women");
             setElectronics(res.data);
             setError(null);
         } catch (error) {
@@ -50,7 +50,7 @@ const Women1 = () => {
             navigate("/login");
             return;
         }
-        axios.post("https://demo-deployment2-8-cq0p.onrender.com/women", item, {
+        axios.post("https://demo-deployment2-15-syk7.onrender.com/women", item, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(() => {
@@ -82,14 +82,7 @@ const Women1 = () => {
                         />
                     </Box>
 
-                    {/* Search input */}
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        sx={{ flexGrow: 1, maxWidth: 400, minWidth: 200 }}
-                    // You can add onChange for search logic later
-                    />
+                   
 
                     {/* Icons: Login/Profile & Cart */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

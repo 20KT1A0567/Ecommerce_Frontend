@@ -44,7 +44,7 @@ const Electronics = () => {
     const getElectronics = async () => {
         try {
             const res = await axios.get(
-                "https://demo-deployment2-8-cq0p.onrender.com/user/electronics",
+                "https://demo-deployment2-15-syk7.onrender.com/user/electronics",
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -140,13 +140,7 @@ const Electronics = () => {
                             width: "300px",
                         }}
                     >
-                        <SearchIcon color="action" />
-                        <InputBase
-                            placeholder="Search products..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            sx={{ width: "100%" }}
-                        />
+                       
                     </Box>
 
                     {/* RIGHT: Icons */}
@@ -282,15 +276,7 @@ const Electronics = () => {
                             <div className="name">{item.name}</div>
                             <div className="description">{item.description}</div>
                             <div className="price">Price: ₹{item.price}</div>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddToCart(item);
-                                }}
-                                className="add-to-cart-btn"
-                            >
-                                Add to Cart
-                            </button>
+                           
                         </div>
                     ))
                 ) : (

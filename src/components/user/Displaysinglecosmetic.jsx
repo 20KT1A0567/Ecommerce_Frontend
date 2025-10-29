@@ -54,7 +54,7 @@ const Displaysinglecosmetics = () => {
 
     try {
       await axios.post(
-        `https://demo-deployment2-8-cq0p.onrender.com/api/cart/add/${userId}/cosmetics/${item.id}`,
+        `https://demo-deployment2-15-syk7.onrender.com/api/cart/add/${userId}/cosmetics/${item.id}`,
         null,
         {
           params: { qty: quantity },

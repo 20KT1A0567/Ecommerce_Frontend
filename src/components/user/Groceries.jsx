@@ -33,7 +33,7 @@ const Groceries = () => {
 
     const getGroceries = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/grocery", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/grocery", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -125,13 +125,7 @@ const Groceries = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        sx={{ bgcolor: "white", borderRadius: 1, flexGrow: 1, maxWidth: 400 }}
-                    />
+                    
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <Button
@@ -229,14 +223,7 @@ const Groceries = () => {
                                             </Typography>
                                         </CardContent>
                                         <Box sx={{ p: 2 }}>
-                                            <Button
-                                                variant="contained"
-                                                fullWidth
-                                                onClick={(e) => handleAddToCart(e, item)}
-                                                sx={{ mb: cartItem ? 1 : 0 }}
-                                            >
-                                                Add to Cart
-                                            </Button>
+                                            
 
                                             {cartItem && (
                                                 <Box

@@ -39,7 +39,7 @@ const Footwear = () => {
 
     const getFootwear = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/footwear", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/footwear", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -93,7 +93,7 @@ const Footwear = () => {
         // Call backend API to add item to cart (adjust as needed)
         axios
             .post(
-                `https://demo-deployment2-8-cq0p.onrender.com/cart`,
+                `https://demo-deployment2-15-syk7.onrender.com/cart`,
                 item,
                 { headers: { Authorization: `Bearer ${token}` } }
             )
@@ -137,13 +137,7 @@ const Footwear = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        sx={{ flexGrow: 1, maxWidth: 400, bgcolor: "white", borderRadius: 1 }}
-                    />
+                    
 
                     <FormControl size="small" sx={{ minWidth: 150, bgcolor: "white", borderRadius: 1 }}>
                         <InputLabel>Sort By</InputLabel>
@@ -221,14 +215,7 @@ const Footwear = () => {
                                         </Typography>
                                     </CardContent>
                                     <Box sx={{ p: 2 }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            fullWidth
-                                            onClick={(e) => handleAddToCart(item, e)}
-                                        >
-                                            Add to Cart
-                                        </Button>
+                                       
                                     </Box>
                                 </Card>
                             </Grid>

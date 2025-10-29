@@ -39,7 +39,7 @@ const Kids = () => {
 
     const getKidsProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/kids", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/kids", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -129,22 +129,7 @@ const Kids = () => {
                         </Typography>
                     </Box>
 
-                    {/* Search */}
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        sx={{ bgcolor: "white", borderRadius: 1, width: { xs: "100%", sm: 300 } }}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
+                    
 
                     {/* Filter */}
                     <Box sx={{ position: "relative" }}>
@@ -259,15 +244,7 @@ const Kids = () => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button
-                                            size="small"
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={(e) => handleAddToCart(item, e)}
-                                            fullWidth
-                                        >
-                                            Add to Cart
-                                        </Button>
+                                        
                                     </CardActions>
                                 </Card>
                             </Grid>

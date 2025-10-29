@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -23,7 +24,10 @@ const Invoice = () => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { cartItems, orderId, paymentId, total, paymentStatus, isDemo } = location.state || {};
+  const userId = localStorage.getItem("userId");
+
+  const { cartItems, orderId, paymentId, total, paymentStatus, isDemo } =
+    location.state || {};
 
   useEffect(() => {
     if (!location.state) {
@@ -52,9 +56,70 @@ const Invoice = () => {
       items: cartItems || [],
       createdAt: new Date().toISOString(),
     });
-  }, [location.state, navigate, orderId, paymentId, total, paymentStatus, isDemo, cartItems]);
+  }, [
+    location.state,
+    navigate,
+    orderId,
+    paymentId,
+    total,
+    paymentStatus,
+    isDemo,
+    cartItems,
+  ]);
 
-  const handleDownload = () => {
+  
+  
+  
+const deleteCartByUserId = async () => {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  
+  console.log("🔑 Token:", token);
+  console.log("👤 User ID:", userId);
+
+  if (!token) {
+    console.error("❌ No token found — user not logged in.");
+    return;
+  }
+
+  try {
+    // Use the same endpoint that works in Postman
+    const response = await axios.delete(
+      `https://demo-deployment2-15-syk7.onrender.com/api/cart/clear/${userId}`,
+      {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    console.log("✅ Cart cleared successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error clearing cart:", error);
+    
+    // More detailed error logging
+    if (error.response) {
+      console.log("🔍 Error details:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    } else if (error.request) {
+      console.log("🔍 No response received:", error.request);
+    } else {
+      console.log("🔍 Request setup error:", error.message);
+    }
+    
+    throw error;
+  }
+};
+  // ✅ Handle download + delete
+  const handleDownload = async () => {
+    if (!orderDetails) return;
+    await deleteCartByUserId(); // delete before download
+
     const invoiceContent = `
       INVOICE
       Order ID: ${orderDetails?.orderId}
@@ -62,30 +127,55 @@ const Invoice = () => {
       Status: ${orderDetails?.paymentStatus}
       
       ITEMS:
-      ${orderDetails?.items.map(item => {
-        const product = item.menClothing || item.womenClothing || item.kidsClothing || 
-                        item.grocery || item.cosmetics || item.footwear || 
-                        item.electronics || item.laptops || item.mobiles || item.toys || item;
-        return `${product?.name || 'Product'} - ₹${product?.price || item.price} x ${item.qty || item.quantity || 1}`;
-      }).join('\n      ')}
+      ${orderDetails?.items
+        .map((item) => {
+          const product =
+            item.menClothing ||
+            item.womenClothing ||
+            item.kidsClothing ||
+            item.grocery ||
+            item.cosmetics ||
+            item.footwear ||
+            item.electronics ||
+            item.laptops ||
+            item.mobiles ||
+            item.toys ||
+            item;
+          return `${product?.name || "Product"} - ₹${product?.price || item.price
+            } x ${item.qty || item.quantity || 1}`;
+        })
+        .join("\n      ")}
       
       TOTAL: ₹${orderDetails?.total}
       
       Thank you for your purchase!
     `;
 
-    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const blob = new Blob([invoiceContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `invoice-${orderDetails?.orderId}.txt`;
     link.click();
     URL.revokeObjectURL(url);
   };
 
+  // ✅ Handle back to home + delete
+  const handleBackToHome = async () => {
+    await deleteCartByUserId();
+    navigate("/userdashboard");
+  };
+
   if (!orderDetails) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
         <Typography>Loading invoice...</Typography>
       </Box>
     );
@@ -95,13 +185,20 @@ const Invoice = () => {
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: "auto" }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         {/* Header */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="h4" component="h1" fontWeight="bold">
             INVOICE
           </Typography>
-          <Chip 
-            label={isDemo ? "DEMO ORDER" : "PAID"} 
-            color={isDemo ? "secondary" : "success"} 
+          <Chip
+            label={isDemo ? "DEMO ORDER" : "PAID"}
+            color={isDemo ? "secondary" : "success"}
             variant="outlined"
           />
         </Box>
@@ -112,12 +209,21 @@ const Invoice = () => {
             Order Details
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <Typography><strong>Order ID:</strong> {orderDetails.orderId}</Typography>
+            <Typography>
+              <strong>Order ID:</strong> {orderDetails.orderId}
+            </Typography>
             {orderDetails.paymentId && (
-              <Typography><strong>Payment ID:</strong> {orderDetails.paymentId}</Typography>
+              <Typography>
+                <strong>Payment ID:</strong> {orderDetails.paymentId}
+              </Typography>
             )}
-            <Typography><strong>Date:</strong> {new Date(orderDetails.createdAt).toLocaleString()}</Typography>
-            <Typography><strong>Status:</strong> {orderDetails.paymentStatus}</Typography>
+            <Typography>
+              <strong>Date:</strong>{" "}
+              {new Date(orderDetails.createdAt).toLocaleString()}
+            </Typography>
+            <Typography>
+              <strong>Status:</strong> {orderDetails.paymentStatus}
+            </Typography>
           </Box>
         </Box>
 
@@ -139,9 +245,18 @@ const Invoice = () => {
             </TableHead>
             <TableBody>
               {orderDetails.items.map((item, index) => {
-                const product = item.menClothing || item.womenClothing || item.kidsClothing || 
-                              item.grocery || item.cosmetics || item.footwear || 
-                              item.electronics || item.laptops || item.mobiles || item.toys || item;
+                const product =
+                  item.menClothing ||
+                  item.womenClothing ||
+                  item.kidsClothing ||
+                  item.grocery ||
+                  item.cosmetics ||
+                  item.footwear ||
+                  item.electronics ||
+                  item.laptops ||
+                  item.mobiles ||
+                  item.toys ||
+                  item;
                 const price = product?.price || item.price || 0;
                 const quantity = item.qty || item.quantity || 1;
                 const itemTotal = price * quantity;
@@ -169,7 +284,11 @@ const Invoice = () => {
             Total: ₹{orderDetails.total}
           </Typography>
           {isDemo && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1 }}
+            >
               * This is a demo order for testing purposes
             </Typography>
           )}
@@ -178,7 +297,14 @@ const Invoice = () => {
         <Divider sx={{ my: 3 }} />
 
         {/* Actions */}
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <Button
             variant="contained"
             startIcon={<DownloadIcon />}
@@ -190,7 +316,7 @@ const Invoice = () => {
           <Button
             variant="outlined"
             startIcon={<HomeIcon />}
-            onClick={() => navigate("/userdashboard")}
+            onClick={handleBackToHome}
             size="large"
           >
             Back to Home

@@ -45,7 +45,7 @@ const UploadElectronics = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/admin/electronics", {
+            const response = await axios.get("https://demo-deployment2-15-syk7.onrender.com/admin/electronics", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -94,7 +94,7 @@ const UploadElectronics = () => {
         const token = localStorage.getItem("token");
 
         try {
-            await axios.post("https://demo-deployment2-8-cq0p.onrender.com/admin/upload/electronics", formData, {
+            await axios.post("https://demo-deployment2-15-syk7.onrender.com/admin/upload/electronics", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ const UploadElectronics = () => {
 
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`https://demo-deployment2-8-cq0p.onrender.com/admin/delete/electronics/${id}`, {
+            await axios.delete(`https://demo-deployment2-15-syk7.onrender.com/admin/delete/electronics/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -164,7 +164,7 @@ const UploadElectronics = () => {
 
         try {
             const response = await axios.put(
-                `https://demo-deployment2-8-cq0p.onrender.com/admin/update/electronics/${selectedItem.id}`,
+                `https://demo-deployment2-15-syk7.onrender.com/admin/update/electronics/${selectedItem.id}`,
                 formData,
                 {
                     headers: {

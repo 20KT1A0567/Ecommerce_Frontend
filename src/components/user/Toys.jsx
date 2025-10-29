@@ -34,7 +34,7 @@ const Toys = () => {
 
     const getToys = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/toys", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/toys", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -118,13 +118,7 @@ const Toys = () => {
             >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <img src={logo} alt="Logo" width={160} height={80} />
-                    <TextField
-                        variant="outlined"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        size="small"
-                    />
+                   
                 </Box>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

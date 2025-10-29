@@ -26,7 +26,7 @@ const Footwear1 = () => {
 
     const getFootwear = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/footwear");
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/footwear");
             setFootwear(res.data);
             setError(null);
         } catch (error) {
@@ -54,7 +54,7 @@ const Footwear1 = () => {
         }
 
         axios
-            .post("https://demo-deployment2-8-cq0p.onrender.com/cart", item, {
+            .post("https://demo-deployment2-15-syk7.onrender.com/cart", item, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then(() => {
@@ -94,14 +94,7 @@ const Footwear1 = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ bgcolor: "white", borderRadius: 1, flexGrow: 1, maxWidth: 400 }}
-                    />
-
+                    
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <Link to="/login" style={{ textDecoration: "none" }}>
                             <img

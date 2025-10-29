@@ -36,7 +36,7 @@ const Laptops = () => {
 
     const getLaptops = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/laptops", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/laptops", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -199,18 +199,7 @@ const Laptops = () => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button
-                                            size="small"
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAddToCart(item);
-                                            }}
-                                            fullWidth
-                                        >
-                                            Add to Cart
-                                        </Button>
+                                      
                                     </CardActions>
                                 </Card>
                             </Grid>

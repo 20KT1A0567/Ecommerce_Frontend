@@ -35,7 +35,7 @@ const Men = () => {
 
     const getMenProducts = async () => {
         try {
-            const res = await axios.get("https://demo-deployment2-8-cq0p.onrender.com/user/men", {
+            const res = await axios.get("https://demo-deployment2-15-syk7.onrender.com/user/men", {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -126,14 +126,7 @@ const Men = () => {
                         </Typography>
                     </Box>
 
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search products"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        sx={{ bgcolor: "white", borderRadius: 1, width: { xs: "100%", sm: 300 } }}
-                    />
+                   
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <Button
@@ -263,16 +256,7 @@ const Men = () => {
                                             </Typography>
                                         </CardContent>
                                         <CardActions sx={{ justifyContent: "space-between", px: 2 }}>
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleAddToCart(item);
-                                                }}
-                                            >
-                                                Add to Cart
-                                            </Button>
+                                            
 
                                             {cartItem && (
                                                 <Box
